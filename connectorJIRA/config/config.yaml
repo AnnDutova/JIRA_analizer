@@ -1,0 +1,10 @@
+DBSettings:
+  dbHost: "localhost"
+  dbPort: "5432"
+  dbName: "testdb"
+  dbUsername: "pguser"
+  dbPassword: "pgpsd"
+
+ProgramSettings:
+  apacheUrl: "https://issues.apache.org/jira/"
+  projectNames: "AGILA"
