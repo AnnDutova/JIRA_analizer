@@ -2,7 +2,9 @@ package datatransformer
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -61,20 +63,21 @@ func (stCh *IssueStatusChanges) ToJSON() string {
 	return string(str)
 }
 
-func FormatIssues(issues []byte) []Issue {
+func FormatIssues(issues []byte) ([]Issue, error) {
 	var body Page
 	err := json.Unmarshal(issues, &body)
 	if err != nil {
-		fmt.Printf("Error when unmarshal JSON: %s\n", err)
-		os.Exit(1)
+		log.Printf("Error when unmarshal JSON: %s\n", err)
+		return nil, errors.New("cannot unmarshal JSON with issues")
 	}
 	var arrNewIssues []Issue
 	for _, issue := range body.Issues {
+		key := issue.Key
 		id, err := strconv.Atoi(issue.Id)
 		if err != nil {
-			panic(err)
+			log.Printf("Error when parsing issue id: %s\n", err)
+			return nil, errors.New("cannot unmarshal issueID of issue: " + key)
 		}
-		key := issue.Key
 		issueType := issue.Fields.Type.Name
 		status := issue.Fields.Status.Name
 		summary := issue.Fields.Summary
@@ -90,15 +93,15 @@ func FormatIssues(issues []byte) []Issue {
 		created = created[:len(created)-5] + "Z" //replace timezone for parsing
 		createdTime, err := time.Parse(time.RFC3339, created)
 		if err != nil {
-			fmt.Printf("Error when parsing time: %s\n", err)
-			os.Exit(1)
+			log.Printf("Error when parsing time: %s\n", err)
+			return nil, errors.New("cannot unmarshal createdTime of issue: " + key)
 		}
 		updated := issue.Fields.Updated
 		updated = updated[:len(created)-5] + "Z" //replace timezone for parsing
 		updatedTime, err := time.Parse(time.RFC3339, updated)
 		if err != nil {
-			fmt.Printf("Error when parsing time: %s\n", err)
-			os.Exit(1)
+			log.Printf("Error when parsing time: %s\n", err)
+			return nil, errors.New("cannot unmarshal updatedTime of issue: " + key)
 		}
 		histories := issue.Changelog.Histories
 		var closedTime time.Time
@@ -107,11 +110,16 @@ func FormatIssues(issues []byte) []Issue {
 			closed := histories[length-1].Created
 			closed = closed[:len(closed)-5] + "Z"
 			closedTime, err = time.Parse(time.RFC3339, closed)
+			if err != nil {
+				log.Printf("Error when parsing time: %s\n", err)
+				return nil, errors.New("cannot unmarshal closedTime of issue: " + key)
+			}
 		}
 
 		projectId, err := strconv.Atoi(issue.Fields.Project.ID)
 		if err != nil {
-			panic(err)
+			log.Printf("Error when parsing project id: %s\n", err)
+			return nil, errors.New("cannot unmarshal projectID of issue: " + key)
 		}
 		project := Project{
 			Id:   projectId,
@@ -136,7 +144,7 @@ func FormatIssues(issues []byte) []Issue {
 		}
 		arrNewIssues = append(arrNewIssues, myIssue)
 	}
-	return arrNewIssues
+	return arrNewIssues, nil
 }
 
 func ToFile(str string, name string) {
