@@ -30,6 +30,7 @@ type Router struct {
 func configureRouters(r *Router) {
 	http.HandleFunc("/test", r.handleTestAnswer)
 	http.HandleFunc("/issues", r.handleIssues)
+	http.HandleFunc("/updateProject", r.handleUpdateProject)
 }
 
 func (rout *Router) handleTestAnswer(rw http.ResponseWriter, r *http.Request) {
@@ -40,6 +41,23 @@ func (rout *Router) handleIssues(rw http.ResponseWriter, r *http.Request) {
 	config := properties.GetConfig(os.Args[1])
 	issues := GetIssues(rout.JIRAConnector, config.ProgramSettings.ProjectNames)
 	respond(rw, r, http.StatusOK, issues)
+}
+
+func (rout *Router) handleUpdateProject(rw http.ResponseWriter, r *http.Request) {
+	config := properties.GetConfig(os.Args[1])
+	issues := GetIssues(rout.JIRAConnector, config.ProgramSettings.ProjectNames)
+	histories := make([]datatransformer.IssueStatusChanges, len(issues))
+
+	for i, issue := range issues {
+		changelog := rout.JIRAConnector.GetIssueChangelogJSON(issue.Key)
+		statusChanges := datatransformer.FormatChangelog(changelog)
+		histories[i] = statusChanges
+	}
+
+	if err := rout.dbConnector.PushFirstData(issues, histories); err != nil {
+		parseError(rw, r, http.StatusBadRequest, err)
+	}
+	respond(rw, r, http.StatusOK, "push")
 }
 
 func parseError(w http.ResponseWriter, r *http.Request, code int, err error) {
