@@ -4,23 +4,9 @@ import (
 	"connectorJIRA/pkg/connector"
 	"connectorJIRA/pkg/datapusher"
 	"connectorJIRA/pkg/datatransformer"
-	"connectorJIRA/pkg/properties"
 	"encoding/json"
 	"net/http"
-	"os"
 )
-
-func GetIssues(connectionApache *connector.Connection, projectName string) []datatransformer.Issue {
-	startAt := 0
-	total, _ := connectionApache.GetTotalIssues(projectName)
-	var issues []datatransformer.Issue
-	for ; startAt < total; startAt += 50 {
-		issuesRaw, _ := connectionApache.GetExpandIssuesJSON(projectName, startAt)
-		formattedIssues, _ := datatransformer.FormatIssues(issuesRaw)
-		issues = append(issues, formattedIssues...)
-	}
-	return issues
-}
 
 type Router struct {
 	dbConnector   *datapusher.PSQLConnector
@@ -31,21 +17,27 @@ func configureRouters(r *Router) {
 	http.HandleFunc("/test", r.handleTestAnswer)
 	http.HandleFunc("/issues", r.handleIssues)
 	http.HandleFunc("/updateProject", r.handleUpdateProject)
+	http.HandleFunc("/allProjects", r.handleAllProjects)
 }
 
 func (rout *Router) handleTestAnswer(rw http.ResponseWriter, r *http.Request) {
 	respond(rw, r, http.StatusOK, "test")
 }
 
+func (rout *Router) handleAllProjects(rw http.ResponseWriter, r *http.Request) {
+	projects, _ := rout.JIRAConnector.GetAllFormattedProjects()
+	respond(rw, r, http.StatusOK, projects)
+}
+
 func (rout *Router) handleIssues(rw http.ResponseWriter, r *http.Request) {
-	config := properties.GetConfig(os.Args[1])
-	issues := GetIssues(rout.JIRAConnector, config.ProgramSettings.ProjectNames)
+	project := r.FormValue("project")
+	issues, _ := rout.JIRAConnector.GetFormattedIssues(project)
 	respond(rw, r, http.StatusOK, issues)
 }
 
 func (rout *Router) handleUpdateProject(rw http.ResponseWriter, r *http.Request) {
-	config := properties.GetConfig(os.Args[1])
-	issues := GetIssues(rout.JIRAConnector, config.ProgramSettings.ProjectNames)
+	project := r.FormValue("project")
+	issues, _ := rout.JIRAConnector.GetFormattedIssues(project)
 	histories := make([]datatransformer.IssueStatusChanges, len(issues))
 
 	for i, issue := range issues {
@@ -54,7 +46,7 @@ func (rout *Router) handleUpdateProject(rw http.ResponseWriter, r *http.Request)
 		histories[i] = statusChanges
 	}
 
-	if err := rout.dbConnector.PushFirstData(issues, histories); err != nil {
+	if err := rout.dbConnector.UpdateData(issues, histories); err != nil {
 		parseError(rw, r, http.StatusBadRequest, err)
 	}
 	respond(rw, r, http.StatusOK, "push")

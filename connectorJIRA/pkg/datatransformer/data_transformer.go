@@ -10,49 +10,6 @@ import (
 	"time"
 )
 
-type Project struct {
-	Id   int
-	Name string
-}
-
-type Issue struct {
-	Id          int
-	Key         string
-	Project     Project
-	CreatedTime time.Time
-	ClosedTime  time.Time
-	UpdatedTime time.Time
-	Summary     string
-	Description string
-	Type        string
-	Priority    string
-	Status      string
-	Creator     string
-	Assignee    string
-	TimeSpent   int
-}
-
-type Page struct {
-	Issues []JiraIssue `json:"issues" structs:"issues"`
-}
-
-type IssueWithChangelog struct {
-	Id      string    `json:"id" structs:"id"`
-	Changes Changelog `json:"changelog" structs:"changelog"`
-}
-
-type IssueStatusChanges struct {
-	Id        int
-	Histories []StatusChange
-}
-
-type StatusChange struct {
-	Author     string
-	ChangeTime time.Time
-	FromStatus string
-	ToStatus   string
-}
-
 func (is *Issue) ToJSON() string {
 	str, _ := json.Marshal(is)
 	return string(str)
@@ -64,7 +21,9 @@ func (stCh *IssueStatusChanges) ToJSON() string {
 }
 
 func FormatIssues(issues []byte) ([]Issue, error) {
-	var body Page
+	var body struct {
+		Issues []JiraIssue `json:"issues" structs:"issues"`
+	}
 	err := json.Unmarshal(issues, &body)
 	if err != nil {
 		log.Printf("Error when unmarshal JSON: %s\n", err)
@@ -123,6 +82,7 @@ func FormatIssues(issues []byte) ([]Issue, error) {
 		}
 		project := Project{
 			Id:   projectId,
+			Key:  issue.Fields.Project.Key,
 			Name: issue.Fields.Project.Name,
 		}
 
@@ -161,7 +121,10 @@ func ToFile(str string, name string) {
 }
 
 func FormatChangelog(changelog []byte) IssueStatusChanges {
-	var body IssueWithChangelog
+	var body struct {
+		Id      string    `json:"id" structs:"id"`
+		Changes Changelog `json:"changelog" structs:"changelog"`
+	}
 	err := json.Unmarshal(changelog, &body)
 	if err != nil {
 		fmt.Printf("Error when unmarshal JSON: %s\n", err)
@@ -198,4 +161,29 @@ func FormatChangelog(changelog []byte) IssueStatusChanges {
 	}
 
 	return issueStatusChanges
+}
+
+func FormatProjects(projects []byte) ([]Project, error) {
+	var body []JiraProject
+	err := json.Unmarshal(projects, &body)
+	if err != nil {
+		return nil, errors.New("Error when unmarshaling json")
+	}
+
+	var projectsArr []Project
+	for _, project := range body {
+		id, err := strconv.Atoi(project.ID)
+		if err != nil {
+			log.Printf("Error when convert id to string: %s\n", err)
+			return nil, errors.New("Cannot convert id to string ")
+		}
+		myProject := Project{
+			Id:   id,
+			Key:  project.Key,
+			Name: project.Name,
+		}
+		projectsArr = append(projectsArr, myProject)
+	}
+
+	return projectsArr, nil
 }
