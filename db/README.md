@@ -10,3 +10,33 @@
 `docker-compose stop` - stop containers
 
 `docker-compose down` - stop and remove containers
+
+## Getting started with k8s
+Start:
+```yaml
+kubectl apply -f service.yaml
+kubectl apply -f config-map-db.yaml
+kubectl create configmap master-slave-config --from-file=$(PROJECT_PATH)/db-init-k8s/ --from-file=$(PROJECT_PATH)/db-init-scripts/
+kubectl apply -f statefull-set.yaml
+```
+Delete:
+```yaml
+ kubectl delete service/db-service
+ kubectl delete configmap/db-config
+ kubectl delete configmap/master-slave-config
+ kubectl delete statefulset.apps/postgres-db
+ kubectl delete pvc --all
+ kubectl delete pv --all
+```
+Command in CLI for check:
+```yaml
+psql -U pguser -l
+psql --port=5432 --user=pguser testdb
+\dt
+su
+psql -U postgres
+\dt
+\df
+\x
+Insert into author(name) values('some name');
+```
