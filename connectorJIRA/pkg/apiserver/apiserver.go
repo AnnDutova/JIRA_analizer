@@ -7,14 +7,20 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 const (
 	bindAddr = ":8050"
 )
 
-func Start(config *properties.Config) error {
-	db, err := newDB(config)
+func Start() error {
+	config, err := properties.GetConfig(os.Args[1])
+	if err != nil {
+		return err
+	}
+
+	db, err := newDB()
 	if err != nil {
 		return err
 	}
@@ -25,14 +31,16 @@ func Start(config *properties.Config) error {
 		return err
 	}
 
-	jcon, err := newJIRAConnection(config)
+	jcon, err := newJIRAConnection()
 	if err != nil {
 		return err
 	}
 
 	router := &Router{
-		dbConnector:   con,
-		JIRAConnector: jcon,
+		dbConnector:       con,
+		JIRAConnector:     jcon,
+		issueInOneRequest: config.ProgramSettings.IssueInOneRequest,
+		threadCount:       config.ProgramSettings.ThreadCount,
 	}
 
 	configureRouters(router)
@@ -40,7 +48,11 @@ func Start(config *properties.Config) error {
 	return http.ListenAndServe(bindAddr, nil)
 }
 
-func newDB(config *properties.Config) (*sql.DB, error) {
+func newDB() (*sql.DB, error) {
+	config, err := properties.GetConfig(os.Args[1])
+	if err != nil {
+		return nil, err
+	}
 	dbName := config.DbSettings.DbName
 	dbUsername := config.DbSettings.DbUsername
 	dbPassword := config.DbSettings.DbPassword
@@ -59,7 +71,6 @@ func newDB(config *properties.Config) (*sql.DB, error) {
 	return db, nil
 }
 
-func newJIRAConnection(config *properties.Config) (*connector.Connection, error) {
-	url := config.ProgramSettings.ApacheUrl
-	return connector.GetConnection(url)
+func newJIRAConnection() (*connector.Connection, error) {
+	return connector.GetConnection()
 }

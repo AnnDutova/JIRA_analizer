@@ -6,5 +6,8 @@ DBSettings:
   dbPassword: "pgpwd"
 
 ProgramSettings:
-  apacheUrl: "https://issues.apache.org/jira/"
-  projectNames: "AGILA"
+  jiraUrl: "https://issues.apache.org/jira"
+  issueInOneRequest: 100 #max = 1000, min = 50
+  threadCount: 4 #min = 1
+  maxTimeSleep: 8000 #максимальное время ожидания перед повторной попыткой запроса (миллилсек)
+  minTimeSleep: 50 #начальнгое время ожидания перед повторной попыткой запроса (миллисек)

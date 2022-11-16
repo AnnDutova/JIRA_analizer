@@ -2,7 +2,7 @@ package properties
 
 import (
 	"bufio"
-	"fmt"
+	"errors"
 	"gopkg.in/yaml.v3"
 	"io"
 	"os"
@@ -17,29 +17,39 @@ type Config struct {
 		DbPassword string `yaml:"dbPassword"`
 	} `yaml:"DBSettings"`
 	ProgramSettings struct {
-		ApacheUrl    string `yaml:"apacheUrl"`
-		ProjectNames string `yaml:"projectNames"`
+		ApacheUrl         string `yaml:"apacheUrl"`
+		IssueInOneRequest uint   `yaml:"issueInOneRequest"`
+		ThreadCount       uint   `yaml:"threadCount"`
+		MaxTimeSleep      uint   `yaml:"maxTimeSleep"`
+		MinTimeSleep      uint   `yaml:"minTimeSleep"`
 	} `yaml:"ProgramSettings"`
 }
 
-func GetConfig(path string) *Config {
+func GetConfig(path string) (*Config, error) {
 	file, err := os.Open(path + "\\connectorJIRA\\config\\config.yaml")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return nil, errors.New("Error while open config file: " + err.Error())
 	}
 	defer file.Close()
 
 	reader := bufio.NewReader(file)
 	data, err := io.ReadAll(reader)
 	if err != nil {
-		panic(err)
+		return nil, errors.New("Error while read config file: " + err.Error())
 	}
 
 	var properties Config
-	if err := yaml.Unmarshal(data, &properties); err != nil {
-		panic(err)
+	err = yaml.Unmarshal(data, &properties)
+	if err != nil {
+		return nil, errors.New("Error while unmarshal config file: " + err.Error())
+	}
+	if properties.ProgramSettings.ThreadCount < 1 {
+		return nil, errors.New("Error in config file: threadCount must be > 0")
+	}
+	IssueInOneRequest := properties.ProgramSettings.IssueInOneRequest
+	if IssueInOneRequest < 50 || IssueInOneRequest > 1000 {
+		return nil, errors.New("Error in config file: issueInOneRequest must be >= 50 and <= 1000")
 	}
 
-	return &properties
+	return &properties, nil
 }

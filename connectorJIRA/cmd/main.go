@@ -8,9 +8,7 @@ import (
 )
 
 func main() {
-	config := properties.GetConfig(os.Args[1])
-
-	if err := apiserver.Start(config); err != nil {
+	if err := apiserver.Start(); err != nil {
 		log.Fatal(err)
 	}
 }

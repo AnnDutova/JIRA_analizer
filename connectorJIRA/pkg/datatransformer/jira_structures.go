@@ -65,7 +65,7 @@ type IssueType struct {
 
 type ChangelogHistory struct {
 	Id      string           `json:"id" structs:"id"`
-	Author  User             `json:"author" structs:"author"`
+	Author  *User            `json:"author" structs:"author"`
 	Created string           `json:"created" structs:"created"`
 	Items   []ChangelogItems `json:"items" structs:"items"`
 }

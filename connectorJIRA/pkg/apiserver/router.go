@@ -4,13 +4,20 @@ import (
 	"connectorJIRA/pkg/connector"
 	"connectorJIRA/pkg/datapusher"
 	"connectorJIRA/pkg/datatransformer"
+	"context"
 	"encoding/json"
+	"errors"
+	"golang.org/x/sync/errgroup"
 	"net/http"
+	"strconv"
+	"sync"
 )
 
 type Router struct {
-	dbConnector   *datapusher.PSQLConnector
-	JIRAConnector *connector.Connection
+	dbConnector       *datapusher.PSQLConnector
+	JIRAConnector     *connector.Connection
+	issueInOneRequest uint
+	threadCount       uint
 }
 
 func configureRouters(r *Router) {
@@ -37,19 +44,94 @@ func (rout *Router) handleIssues(rw http.ResponseWriter, r *http.Request) {
 
 func (rout *Router) handleUpdateProject(rw http.ResponseWriter, r *http.Request) {
 	project := r.FormValue("project")
-	issues, _ := rout.JIRAConnector.GetFormattedIssues(project)
-	histories := make([]datatransformer.IssueStatusChanges, len(issues))
-
-	for i, issue := range issues {
-		changelog := rout.JIRAConnector.GetIssueChangelogJSON(issue.Key)
-		statusChanges := datatransformer.FormatChangelog(changelog)
-		histories[i] = statusChanges
-	}
-
-	if err := rout.dbConnector.UpdateData(issues, histories); err != nil {
+	total, err := rout.JIRAConnector.GetTotalIssues(project)
+	if err != nil {
 		parseError(rw, r, http.StatusBadRequest, err)
+		return
 	}
-	respond(rw, r, http.StatusOK, "push")
+	if total == 0 {
+		parseError(rw, r, http.StatusBadRequest, errors.New("This project is empty"))
+		return
+	}
+
+	issueInOneRequest := int(rout.issueInOneRequest)
+	threadCount := int(rout.threadCount)
+
+	if issueInOneRequest*(threadCount-1) >= total {
+		if total%issueInOneRequest == 0 {
+			threadCount = total / issueInOneRequest
+		} else {
+			threadCount = total/issueInOneRequest + 1
+		}
+	}
+
+	g, _ := errgroup.WithContext(context.Background())
+	var m1 sync.Mutex
+	var m2 sync.Mutex
+
+	var formattedIssues []datatransformer.Issue
+	var histories []datatransformer.IssueStatusChanges
+
+	for i := 0; i < threadCount; i++ {
+		i := i
+		g.Go(func() error {
+			endAt := float64(total) / float64(threadCount) * float64(i+1)
+			var startAt int
+			if i == 0 {
+				startAt = 0
+			} else {
+				startAtFloat := float64(total) / float64(threadCount) * float64(i)
+				if int(startAtFloat)%issueInOneRequest == 0 {
+					startAt = int(startAtFloat)
+				} else {
+					startAt = int(startAtFloat) + issueInOneRequest - int(startAtFloat)%issueInOneRequest
+				}
+			}
+
+			for startAt < int(endAt) {
+				issues, err := rout.JIRAConnector.GetExpandIssuesJSON(project, startAt, issueInOneRequest)
+				if err != nil {
+					return errors.New("Error in thread " + strconv.Itoa(i+1) + " when GetExpandIssuesJSON:" + err.Error())
+				}
+				formattedIssuesInThread, err := datatransformer.FormatIssues(issues)
+				if err != nil {
+					return errors.New("Error in thread " + strconv.Itoa(i+1) + " when FormatIssues:" + err.Error())
+				}
+
+				m1.Lock()
+				formattedIssues = append(formattedIssues, formattedIssuesInThread...)
+				m1.Unlock()
+
+				historiesInThread := make([]datatransformer.IssueStatusChanges, len(formattedIssuesInThread))
+
+				for inx, issue := range formattedIssuesInThread {
+					changelog, err := rout.JIRAConnector.GetIssueChangelogJSON(issue.Key)
+					if err != nil {
+						return errors.New("Error in thread " + strconv.Itoa(i+1) + " when GetIssueChangelogJSON:" + err.Error())
+					}
+					statusChanges := datatransformer.FormatChangelog(changelog)
+					historiesInThread[inx] = statusChanges
+				}
+
+				m2.Lock()
+				histories = append(histories, historiesInThread...)
+				m2.Unlock()
+
+				startAt += issueInOneRequest
+			}
+			return nil
+		})
+
+	}
+	if err := g.Wait(); err != nil {
+		parseError(rw, r, http.StatusBadRequest, err)
+		return
+	}
+	if err := rout.dbConnector.UpdateData(formattedIssues, histories); err != nil {
+		parseError(rw, r, http.StatusBadRequest, err)
+		return
+	}
+	respond(rw, r, http.StatusOK, "Project updated in DB")
 }
 
 func parseError(w http.ResponseWriter, r *http.Request, code int, err error) {

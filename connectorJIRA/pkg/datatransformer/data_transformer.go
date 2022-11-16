@@ -43,8 +43,11 @@ func FormatIssues(issues []byte) ([]Issue, error) {
 		priority := issue.Fields.Priority.Name
 		timeSpent := issue.Fields.TimeSpent
 		description := issue.Fields.Description
-		creator := issue.Fields.Creator.DisplayName
-		assignee := ""
+		creator := "Unknown"
+		if issue.Fields.Creator != nil {
+			creator = issue.Fields.Creator.DisplayName
+		}
+		assignee := "Unknown"
 		if issue.Fields.Assignee != nil {
 			assignee = issue.Fields.Assignee.DisplayName
 		}
@@ -136,7 +139,10 @@ func FormatChangelog(changelog []byte) IssueStatusChanges {
 		panic(err)
 	}
 	for _, history := range body.Changes.Histories {
-		author := history.Author.DisplayName
+		author := "Unknown"
+		if history.Author != nil {
+			author = history.Author.DisplayName
+		}
 		change := history.Created
 		change = change[:len(change)-5] + "Z" //replace timezone for parsing
 		changeTime, err := time.Parse(time.RFC3339, change)
