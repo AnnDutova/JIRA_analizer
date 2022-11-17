@@ -3,6 +3,7 @@ package apiserver
 import (
 	"connectorJIRA/pkg/connector"
 	"connectorJIRA/pkg/datapusher"
+	"connectorJIRA/pkg/logging"
 	"connectorJIRA/pkg/properties"
 	"database/sql"
 	"fmt"
@@ -10,49 +11,45 @@ import (
 	"os"
 )
 
-const (
-	bindAddr = ":8050"
-)
-
 func Start() error {
-	config, err := properties.GetConfig(os.Args[1])
-	if err != nil {
-		return err
-	}
 
+	logger := logging.GetLogger()
+	logger.Info("Starting apiserver")
+	config := properties.GetConfig(os.Args[1])
+
+	logger.Info("Try connecting to DB")
 	db, err := newDB()
 	if err != nil {
-		return err
+		logger.Fatal(err)
 	}
+	logger.Info("Connection to DB was successful")
 	defer db.Close()
 
-	con, err := datapusher.New(db)
-	if err != nil {
-		return err
-	}
+	con := datapusher.New(db)
 
+	logger.Info("Try connecting to JIRA")
 	jcon, err := newJIRAConnection()
 	if err != nil {
-		return err
+		logger.Fatal(err)
 	}
+	logger.Info("Connection to JIRA was successful")
 
 	router := &Router{
+		logger:            logger,
 		dbConnector:       con,
 		JIRAConnector:     jcon,
 		issueInOneRequest: config.ProgramSettings.IssueInOneRequest,
 		threadCount:       config.ProgramSettings.ThreadCount,
 	}
-
+	logger.Info("Configurate routers")
 	configureRouters(router)
+	logger.Info("Apiserver is started!")
 
-	return http.ListenAndServe(bindAddr, nil)
+	return http.ListenAndServe(config.ProgramSettings.BindAddress, nil)
 }
 
 func newDB() (*sql.DB, error) {
-	config, err := properties.GetConfig(os.Args[1])
-	if err != nil {
-		return nil, err
-	}
+	config := properties.GetConfig(os.Args[1])
 	dbName := config.DbSettings.DbName
 	dbUsername := config.DbSettings.DbUsername
 	dbPassword := config.DbSettings.DbPassword
@@ -72,5 +69,5 @@ func newDB() (*sql.DB, error) {
 }
 
 func newJIRAConnection() (*connector.Connection, error) {
-	return connector.GetConnection()
+	return connector.GetConnection(os.Args[1])
 }

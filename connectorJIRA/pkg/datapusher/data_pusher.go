@@ -14,10 +14,10 @@ type PSQLConnector struct {
 	db *sql.DB
 }
 
-func New(db_ *sql.DB) (*PSQLConnector, error) {
+func New(db_ *sql.DB) *PSQLConnector {
 	return &PSQLConnector{
 		db: db_,
-	}, nil
+	}
 }
 
 func (c *PSQLConnector) UpdateData(issues []datatransformer.Issue, statuses []datatransformer.IssueStatusChanges) error {

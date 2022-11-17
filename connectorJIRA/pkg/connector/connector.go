@@ -21,37 +21,19 @@ type Connection struct {
 	minTimeSleep uint
 }
 
-func GetConnection() (*Connection, error) {
-	config, err := properties.GetConfig(os.Args[1])
-	if err != nil {
-		return nil, err
-	}
-	jiraClient, err := jira.NewClient(nil, config.ProgramSettings.ApacheUrl)
+func GetConnection(projectPath string) (*Connection, error) {
+	config := properties.GetConfig(projectPath)
+	jiraClient, err := jira.NewClient(nil, config.ProgramSettings.JiraUrl)
 	if err != nil {
 		return nil, errors.New("Incorrect url")
 	}
-	maxTimeSleepMillsec := config.ProgramSettings.MaxTimeSleep
-	timeSleepMillsec := config.ProgramSettings.MinTimeSleep
-	needWait := false
-CON:
-	if needWait {
-		time.Sleep(time.Duration(timeSleepMillsec) * time.Millisecond)
-	}
-	_, err = http.Get(config.ProgramSettings.ApacheUrl)
+	_, err = http.Get(config.ProgramSettings.JiraUrl)
 	if err != nil {
-		needWait = true
-		if timeSleepMillsec < maxTimeSleepMillsec {
-			timeSleepMillsec *= 2
-			if timeSleepMillsec > maxTimeSleepMillsec {
-				timeSleepMillsec = maxTimeSleepMillsec
-			}
-			goto CON
-		}
 		return nil, errors.New("Error when try to get request in GetConnection: " + err.Error())
 	}
 	con := new(Connection)
 	con.client = *jiraClient
-	con.url = config.ProgramSettings.ApacheUrl
+	con.url = config.ProgramSettings.JiraUrl
 	con.maxTimeSleep = config.ProgramSettings.MaxTimeSleep
 	con.minTimeSleep = config.ProgramSettings.MinTimeSleep
 	return con, nil
@@ -153,14 +135,37 @@ CON:
 }
 
 func (con *Connection) getAllProjectsJSON() ([]byte, error) {
+	maxTimeSleepMillsec := con.maxTimeSleep
+	timeSleepMillsec := con.minTimeSleep
+	needWait := false
+CON:
+	if needWait {
+		time.Sleep(time.Duration(timeSleepMillsec) * time.Millisecond)
+	}
 	res, err := http.Get(con.url + "/rest/api/2/project")
 	if err != nil {
-		return nil, errors.New("Error when try to get request")
+		needWait = true
+		if timeSleepMillsec < maxTimeSleepMillsec {
+			timeSleepMillsec *= 2
+			if timeSleepMillsec > maxTimeSleepMillsec {
+				timeSleepMillsec = maxTimeSleepMillsec
+			}
+			goto CON
+		}
+		return nil, errors.New("Error when try to get request in getAllProjectsJSON: " + err.Error())
 	}
 
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, errors.New("Error when read response")
+		needWait = true
+		if timeSleepMillsec < maxTimeSleepMillsec {
+			timeSleepMillsec *= 2
+			if timeSleepMillsec > maxTimeSleepMillsec {
+				timeSleepMillsec = maxTimeSleepMillsec
+			}
+			goto CON
+		}
+		return nil, errors.New("Error when read response in getAllProjectsJSON: " + err.Error())
 	}
 
 	return resBody, nil
@@ -227,17 +232,17 @@ CON:
 	return resBody, nil
 }
 
-func (con *Connection) GetAllFormattedProjects() ([]datatransformer.Project, error) {
+func (con *Connection) GetAllFormattedProjects(limit int, page int, search string) (*datatransformer.ProjectsRespond, error) {
 	projectsByte, err := con.getAllProjectsJSON()
 	if err != nil {
 		return nil, err
 	}
-	project, err := datatransformer.FormatProjects(projectsByte)
+	projects, err := datatransformer.FormatProjectsRespond(projectsByte, limit, page, search)
 	if err != nil {
 		return nil, err
 	}
 
-	return project, nil
+	return projects, nil
 }
 
 func (con *Connection) GetFormattedIssues(projectName string) ([]datatransformer.Issue, error) {

@@ -2,10 +2,16 @@ package datatransformer
 
 import "time"
 
+type ProjectsRespond struct {
+	Projects  []Project
+	PageCount int
+}
+
 type Project struct {
 	Id   int
 	Key  string
 	Name string
+	Url  string
 }
 
 type Issue struct {

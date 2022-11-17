@@ -1,12 +1,14 @@
 package datatransformer
 
 import (
+	"connectorJIRA/pkg/properties"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -40,7 +42,10 @@ func FormatIssues(issues []byte) ([]Issue, error) {
 		issueType := issue.Fields.Type.Name
 		status := issue.Fields.Status.Name
 		summary := issue.Fields.Summary
-		priority := issue.Fields.Priority.Name
+		priority := "No"
+		if issue.Fields.Priority != nil {
+			priority = issue.Fields.Priority.Name
+		}
 		timeSpent := issue.Fields.TimeSpent
 		description := issue.Fields.Description
 		creator := "Unknown"
@@ -123,20 +128,19 @@ func ToFile(str string, name string) {
 	}
 }
 
-func FormatChangelog(changelog []byte) IssueStatusChanges {
+func FormatChangelog(changelog []byte) (IssueStatusChanges, error) {
 	var body struct {
 		Id      string    `json:"id" structs:"id"`
 		Changes Changelog `json:"changelog" structs:"changelog"`
 	}
 	err := json.Unmarshal(changelog, &body)
 	if err != nil {
-		fmt.Printf("Error when unmarshal JSON: %s\n", err)
-		os.Exit(1)
+		return IssueStatusChanges{}, errors.New("Error when unmarshal JSON: " + err.Error())
 	}
 	issueStatusChanges := IssueStatusChanges{}
 	issueStatusChanges.Id, err = strconv.Atoi(body.Id)
 	if err != nil {
-		panic(err)
+		return IssueStatusChanges{}, errors.New("Error when parse id: " + err.Error())
 	}
 	for _, history := range body.Changes.Histories {
 		author := "Unknown"
@@ -147,8 +151,7 @@ func FormatChangelog(changelog []byte) IssueStatusChanges {
 		change = change[:len(change)-5] + "Z" //replace timezone for parsing
 		changeTime, err := time.Parse(time.RFC3339, change)
 		if err != nil {
-			fmt.Printf("Error when parsing time: %s\n", err)
-			os.Exit(1)
+			return IssueStatusChanges{}, errors.New("Error when parse time: " + err.Error())
 		}
 		for _, item := range history.Items {
 			if item.Field == "status" {
@@ -166,30 +169,53 @@ func FormatChangelog(changelog []byte) IssueStatusChanges {
 		}
 	}
 
-	return issueStatusChanges
+	return issueStatusChanges, nil
 }
 
-func FormatProjects(projects []byte) ([]Project, error) {
+func FormatProjectsRespond(projects []byte, limit int, page int, search string) (*ProjectsRespond, error) {
 	var body []JiraProject
 	err := json.Unmarshal(projects, &body)
 	if err != nil {
-		return nil, errors.New("Error when unmarshaling json")
+		return nil, errors.New("Error when unmarshaling json in FormatProjectsRespond: " + err.Error())
 	}
-
-	var projectsArr []Project
+	search = strings.ToLower(search)
+	var searchProjects []JiraProject
 	for _, project := range body {
+		name := strings.ToLower(project.Name)
+		key := strings.ToLower(project.Key)
+		if strings.Contains(name, search) || strings.Contains(key, search) {
+			searchProjects = append(searchProjects, project)
+		}
+	}
+	projectCount := len(searchProjects)
+	var pageCount int
+	if projectCount%limit == 0 {
+		pageCount = projectCount / limit
+	} else {
+		pageCount = projectCount/limit + 1
+	}
+	var projectsArr []Project
+	for i := limit * (page - 1); i < limit*page && i < projectCount; i++ {
+		project := searchProjects[i]
 		id, err := strconv.Atoi(project.ID)
 		if err != nil {
-			log.Printf("Error when convert id to string: %s\n", err)
-			return nil, errors.New("Cannot convert id to string ")
+			return nil, errors.New("Cannot convert id to string in FormatProjectsRespond: " + err.Error())
 		}
+		config := properties.GetConfig(os.Args[1])
+		url := config.ProgramSettings.JiraUrl
+		projectUrl := url + "/projects/" + project.Key
 		myProject := Project{
 			Id:   id,
 			Key:  project.Key,
 			Name: project.Name,
+			Url:  projectUrl,
 		}
 		projectsArr = append(projectsArr, myProject)
 	}
+	projectsRespond := ProjectsRespond{
+		Projects:  projectsArr,
+		PageCount: pageCount,
+	}
 
-	return projectsArr, nil
+	return &projectsRespond, nil
 }
