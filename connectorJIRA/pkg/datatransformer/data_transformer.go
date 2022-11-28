@@ -212,9 +212,14 @@ func FormatProjectsRespond(projects []byte, limit int, page int, search string) 
 		}
 		projectsArr = append(projectsArr, myProject)
 	}
+	pageInfo := PageInfo{
+		PageCount:     pageCount,
+		ProjectsCount: projectCount,
+		CurrentPage:   page,
+	}
 	projectsRespond := ProjectsRespond{
-		Projects:  projectsArr,
-		PageCount: pageCount,
+		Projects: projectsArr,
+		PageInfo: &pageInfo,
 	}
 
 	return &projectsRespond, nil

@@ -49,7 +49,7 @@ func Init(projectPath string) {
 		FullTimestamp: true,
 	}
 
-	err := os.MkdirAll(projectPath+"/connectorJIRA/logs", 0644)
+	err := os.MkdirAll(projectPath+"/connectorJIRA/logs", 0755)
 	if err != nil {
 		panic(err)
 	}
