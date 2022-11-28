@@ -3,8 +3,14 @@ package datatransformer
 import "time"
 
 type ProjectsRespond struct {
-	Projects  []Project
-	PageCount int
+	Projects []Project
+	PageInfo *PageInfo
+}
+
+type PageInfo struct {
+	CurrentPage   int
+	PageCount     int
+	ProjectsCount int
 }
 
 type Project struct {

@@ -1,3 +1,5 @@
 pgadmin/
 **.idea/
-**.json
+connectorJIRA/*.json
+db/test/
+**/logs/
