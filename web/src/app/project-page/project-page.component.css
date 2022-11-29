@@ -1,0 +1,46 @@
+table {
+  width: 75%;
+  margin: auto;
+  display: table;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+tr:hover{
+  background: rgba(236, 222, 177, 0.76);
+}
+tr {
+  border-bottom: 1px solid #d0d0d0;
+}
+/*tr:last-child { border-bottom: none}*/
+
+td, th {
+  width: 25%;
+  padding: 15px 5px;
+  display: table-cell;
+  text-align: left;
+  vertical-align: middle;
+  border-radius: 2px;
+}
+
+table, th, td {
+  border: none;
+}
+
+/*@media (min-resolution: 120dpi) {
+  table, th, td {
+    border-width: 0.75px;
+  }
+}
+
+@media (min-resolution: 144dpi) {
+  table, th, td {
+    border-width: 0.666px;
+  }
+}
+
+@media (min-resolution: 192dpi) {
+  table, th, td {
+    border-width: 0.5px;
+  }
+}*/
+
