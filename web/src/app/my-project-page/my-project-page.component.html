@@ -1,5 +1,6 @@
 <p *ngIf="loading" class="text-center text-lg">Loading...</p>
 
-<app-project *ngFor="let project of myProjects"
-             [project]="project">
-</app-project>
+<app-my-project *ngFor="let project of myProjects"
+                [myProject]="project">
+</app-my-project>
+

@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core'
 import {IProj} from "../../models/proj.model";
-import {MyprojectServices} from "../../services/myproject.services";
+import {ProjectServices} from "../../services/project.services";
 
 @Component({
   selector: 'app-project',
@@ -9,12 +9,16 @@ import {MyprojectServices} from "../../services/myproject.services";
 })
 export class ProjectComponent {
   @Input() project: IProj
+  adding = true
 
 
-  constructor(private myprojectService: MyprojectServices) {
+  constructor(private projectService: ProjectServices) {
+    //TO_DO
+    //this.adding = projectService.find(this.project.Name)
   }
 
-  addMyProject(project: IProj) {
-    this.myprojectService.addMyProject(project)
+  addMyProject(name: String) {
+    this.adding = !this.adding
+    //TO_DO
   }
 }

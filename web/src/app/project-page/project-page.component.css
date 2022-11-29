@@ -4,6 +4,7 @@ table {
   display: table;
   border-collapse: collapse;
   border-spacing: 0;
+  position: relative;
 }
 tr:hover{
   background: rgba(236, 222, 177, 0.76);
@@ -11,7 +12,6 @@ tr:hover{
 tr {
   border-bottom: 1px solid #d0d0d0;
 }
-/*tr:last-child { border-bottom: none}*/
 
 td, th {
   width: 25%;
@@ -26,21 +26,23 @@ table, th, td {
   border: none;
 }
 
-/*@media (min-resolution: 120dpi) {
-  table, th, td {
-    border-width: 0.75px;
-  }
+/*Для поиска*/
+
+.d2 {
+  width: 15%;
+  margin-left: 71%;
 }
 
-@media (min-resolution: 144dpi) {
-  table, th, td {
-    border-width: 0.666px;
-  }
+.d2 input{
+  border: none;
+  outline: none;
+  border-radius: 3px;
 }
 
-@media (min-resolution: 192dpi) {
-  table, th, td {
-    border-width: 0.5px;
-  }
-}*/
+.d2 input {
+  width: 100%;
+  height: 42px;
+  background: #F9F0DA;
+  padding-left: 15px;
+}
 

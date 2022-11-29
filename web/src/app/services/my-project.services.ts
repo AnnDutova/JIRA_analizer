@@ -4,13 +4,13 @@ import {Observable} from "rxjs";
 import {IRequest} from "../models/request.model";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
-export class ProjectServices {
+export class MyProjectServices {
   constructor(private http: HttpClient) {
   }
 
   getAll(): Observable<IRequest>{
-    return this.http.get<IRequest>('http://localhost:8000/api/v1/connector/projects?limit=10&page=2')
+    return this.http.get<IRequest>('http://localhost:8000/api/v1/projects?limit=5&page=1')
   }
 }

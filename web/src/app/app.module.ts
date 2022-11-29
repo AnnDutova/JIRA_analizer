@@ -10,6 +10,8 @@ import {HttpClientModule} from "@angular/common/http";
 import { ProjectPageComponent } from './project-page/project-page.component';
 import { MyProjectPageComponent } from './my-project-page/my-project-page.component';
 import { MyProjectComponent } from './components/my-project/my-project.component';
+import {FormsModule} from "@angular/forms";
+import {SearchPipe} from "./pipes/search.pipe";
 
 const routes = [
   {path: '', component: HomePageComponent},
@@ -26,12 +28,14 @@ const routes = [
     ProjectComponent,
     ProjectPageComponent,
     MyProjectComponent,
-    MyProjectPageComponent
+    MyProjectPageComponent,
+    SearchPipe
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -28,24 +28,60 @@ td, th {
   width: 15%;
 }
 
+.tdbtn {
+  width: 15%;
+}
+
 table, th, td {
   border: none;
 }
 
-/*@media (min-resolution: 120dpi) {
-  table, th, td {
-    border-width: 0.75px;
-  }
+.waves-effect {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-@media (min-resolution: 144dpi) {
-  table, th, td {
-    border-width: 0.666px;
-  }
+.btn {
+  text-decoration: none;
+  color: #fff;
+  background-color: #26a69a;
+  text-align: center;
+  letter-spacing: .5px;
+  -webkit-transition: .2s ease-out;
+  transition: .2s ease-out;
+  cursor: pointer;
 }
 
-@media (min-resolution: 192dpi) {
-  table, th, td {
-    border-width: 0.5px;
-  }
-}*/
+.btn {
+  font-size: 1rem;
+  outline: 0;
+}
+
+.btn {
+  border: none;
+  border-radius: 2px;
+  display: inline-block;
+  height: 36px;
+  line-height: 36px;
+  padding: 0 2rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btnAdd {
+  /*background-color: #2e7d32;*/
+  background-color: #e5c04d;
+}
+
+.btnDelete {
+ /*background-color: #b71c1c;*/
+  background-color: #e5d3b1;
+}
