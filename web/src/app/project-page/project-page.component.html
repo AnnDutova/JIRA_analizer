@@ -1,6 +1,10 @@
 <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
 
-<!--<p *ngIf="loading" class="text-center text-lg">Loading...</p>-->
+<p *ngIf="loading" class="text-center text-lg">Loading...</p>
+
+<div class="d2">
+    <input placeholder="Искать здесь..." id="search-project" type="text" class="validate" [(ngModel)]="searchNameStr">
+</div>
 
 <table class="tbl">
   <thead>
@@ -10,25 +14,8 @@
     <th>Действие</th>
   </tr>
   </thead>
-
-  <!--<tbody>
-  <app-project *ngFor="let project of projects"
-               [project]= "project">
-  </app-project>-->
-
-  <!--<tr>
-    <td>Alan</td>
-    <td>Jellybean</td>
-    <td>$3.76</td>
-  </tr>
-  <tr>
-    <td>Jonathan</td>
-    <td>Lollipop</td>
-    <td>$7.00</td>
-  </tr>-->
-  <!--</tbody>-->
 </table>
 
-<app-project *ngFor="let project of projects"
+<app-project *ngFor="let project of projects | search_name: searchNameStr"
              [project]= "project">
 </app-project>

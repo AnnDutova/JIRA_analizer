@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MyprojectServices} from "../services/myproject.services";
+import {MyProjectServices} from "../services/my-project.services";
 import {IProj} from "../models/proj.model";
 
 @Component({
@@ -11,12 +11,15 @@ export class MyProjectPageComponent implements OnInit {
   myProjects: IProj[] = []
 
   loading = false
-  constructor(private myprojectService: MyprojectServices) { }
+  constructor(private myProjectService: MyProjectServices) { }
 
   ngOnInit(): void {
     this.loading = true
-    this.myProjects = this.myprojectService.getMyProjects();
-    this.loading = false
+    this.myProjectService.getAll().subscribe(projects => {
+      console.log(projects)
+      this.myProjects = projects.data
+      this.loading = false
+    })
   }
 
 }

@@ -1,0 +1,123 @@
+.main_tbl {
+  width: 50%;
+  margin: auto;
+  display: table;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.t {
+  border-bottom: 1px solid #d0d0d0;
+}
+
+.h1{
+  text-align: left;
+}
+
+.h2{
+  text-align: center;
+}
+
+.h3{
+  text-align: right;
+}
+
+.tbl{
+  width: 50%;
+  margin: auto;
+  /*display: table;*/
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: rgba(236, 222, 177, 0.4);
+  position: relative;
+}
+
+td:first-child {
+  border-right: 1px solid #d7c098;
+}
+
+td, th {
+  width: 25%;
+  padding: 15px 5px;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 2px;
+}
+
+table, th, td {
+  border: none;
+}
+
+button {
+  border: none;
+  border-radius: 2px;
+  display: inline-block;
+  height: 36px;
+  line-height: 36px;
+  padding: 0 2rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+  background-color: #e5c04d;
+}
+
+button:disabled {
+  pointer-events: none;
+  background-color: #e5d3b1;
+}
+
+.btn:active {
+  transform: scale(0.98);
+  background-color: #e8ce86;
+}
+.btn {
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+  letter-spacing: .5px;
+  -webkit-transition: .2s ease-out;
+  transition: .2s ease-out;
+  cursor: pointer;
+  position: absolute;
+  right: 25.2%;
+}
+
+.btn {
+  font-size: 1rem;
+  outline: 0;
+}
+
+.settings {
+  display: none;
+}
+.main_tbl{
+  position: relative;
+}
+
+.settings:target {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: auto;
+}
+
+.tbl2{
+  width: 50%;
+  margin: auto;
+  display: table;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: rgba(236, 222, 177, 0.4);
+  position: absolute;
+}
+
+.tbl2 td {
+  text-align: left;
+  padding-left: 5%;
+}
+
+.tbl2 td:first-child {
+  border-right: none;
+}

@@ -6,7 +6,9 @@ A web application that is represented by a separate server, and it has an implem
 ## Getting started
 Go to the directory jira_analyzer/web/
 
-  ```npm start```
+  * ```npm install```
+
+  * ```ng serve```
 >Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/
 
 ## Prerequisites
