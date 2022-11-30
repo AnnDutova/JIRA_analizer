@@ -10,17 +10,26 @@ export class MyProjectComponent implements OnInit{
   @Input() myProject: IProj
   processing: boolean
   settings: boolean
+  checkboxes = [
+    {name: "box_1", chosen: false},
+    {name: "box_2", chosen: false},
+    {name: "box_2", chosen: false},
+  ]
 
   ngOnInit(): void{
     this.processing=false;
     this.settings = false;
   }
 
-  processProject(name: String) {
-   // this.processing = !this.processing
+  processProject() {
+    this.processing = !this.processing
   }
 
   clickOnSettings(){
     this.settings = !this.settings;
+  }
+
+  noneSelected(){
+    return !this.checkboxes.some(checkbox => checkbox.chosen);
   }
 }

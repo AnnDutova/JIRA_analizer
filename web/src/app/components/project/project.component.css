@@ -1,8 +1,6 @@
 table {
   width: 75%;
   margin: auto;
-  /*display: flex;
-  justify-content: center;*/
   display: table;
   border-collapse: collapse;
   border-spacing: 0;
@@ -13,15 +11,16 @@ tr:hover{
 tr {
   border-bottom: 1px solid #d0d0d0;
 }
-/*tr:last-child { border-bottom: none}*/
 
 td, th {
-  width: 25%;
+  width: 32%;
   padding: 15px 5px;
   display: table-cell;
   text-align: left;
   vertical-align: middle;
   border-radius: 2px;
+/*  font-family: 'Open Sans', sans-serif;
+  color: #404040;*/
 }
 
 .tdname {
@@ -30,6 +29,7 @@ td, th {
 
 .tdbtn {
   width: 15%;
+  text-align: center;
 }
 
 table, th, td {
@@ -69,6 +69,7 @@ table, th, td {
   border-radius: 2px;
   display: inline-block;
   height: 36px;
+  width: 150px;
   line-height: 36px;
   padding: 0 2rem;
   text-transform: uppercase;

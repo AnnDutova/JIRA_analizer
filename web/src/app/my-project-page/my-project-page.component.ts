@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MyProjectServices} from "../services/my-project.services";
+import {DatabaseProjectServices} from "../services/database-project.services";
 import {IProj} from "../models/proj.model";
 
 @Component({
@@ -11,7 +11,7 @@ export class MyProjectPageComponent implements OnInit {
   myProjects: IProj[] = []
 
   loading = false
-  constructor(private myProjectService: MyProjectServices) { }
+  constructor(private myProjectService: DatabaseProjectServices) { }
 
   ngOnInit(): void {
     this.loading = true

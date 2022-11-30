@@ -9,8 +9,29 @@ table {
 tr:hover{
   background: rgba(236, 222, 177, 0.76);
 }
+
+.tbl tr:hover {
+  background: none;
+}
+
 tr {
   border-bottom: 1px solid #d0d0d0;
+  font-family: 'Open Sans', sans-serif;
+  color: #404040;
+}
+
+.th1 {
+  width: 25%;
+}
+
+.th2 {
+  width: 50%;
+  padding-left: 14%;
+}
+
+.th3 {
+  width: 25%;
+  padding-left: 90px;
 }
 
 td, th {
@@ -34,7 +55,7 @@ table, th, td {
 }
 
 .d2 input{
-  border: none;
+  border: 1px solid rgba(178, 167, 135, 0.4);
   outline: none;
   border-radius: 3px;
 }

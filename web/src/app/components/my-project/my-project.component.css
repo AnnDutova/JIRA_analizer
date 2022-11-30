@@ -6,6 +6,11 @@
   border-spacing: 0;
 }
 
+th {
+  font-family: 'Open Sans', sans-serif;
+  color: #404040;
+}
+
 .t {
   border-bottom: 1px solid #d0d0d0;
 }
@@ -22,10 +27,34 @@
   text-align: right;
 }
 
+.h3 > a {
+  text-decoration: none;
+  color: #404040;
+}
+
+.h3 a:hover {
+  color: #D5B45B;
+}
+
+.h3 a:after {
+  content: '\f107';
+  font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Brands';
+  font-weight: 900;
+  color: inherit;
+  margin-left: 5px;
+}
+
+.set a:after {
+  content: '\f106';
+  font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Brands';
+  font-weight: 900;
+  color: inherit;
+  margin-left: 5px;
+}
+
 .tbl{
   width: 50%;
   margin: auto;
-  /*display: table;*/
   border-collapse: collapse;
   border-spacing: 0;
   background-color: rgba(236, 222, 177, 0.4);
@@ -43,6 +72,8 @@ td, th {
   text-align: center;
   vertical-align: middle;
   border-radius: 2px;
+  font-family: 'Open Sans', sans-serif;
+  color: #404040;
 }
 
 table, th, td {
@@ -50,9 +81,10 @@ table, th, td {
 }
 
 button {
+  margin-bottom: 1%;
   border: none;
   border-radius: 2px;
-  display: inline-block;
+  display: block;
   height: 36px;
   line-height: 36px;
   padding: 0 2rem;
@@ -81,9 +113,11 @@ button:disabled {
   cursor: pointer;
   position: absolute;
   right: 25.2%;
+
 }
 
 .btn {
+  margin-bottom: 1rem;
   font-size: 1rem;
   outline: 0;
 }
@@ -93,6 +127,7 @@ button:disabled {
 }
 .main_tbl{
   position: relative;
+  margin-bottom: 20px;
 }
 
 .settings:target {
@@ -110,7 +145,7 @@ button:disabled {
   border-collapse: collapse;
   border-spacing: 0;
   background-color: rgba(236, 222, 177, 0.4);
-  position: absolute;
+  position: relative;
 }
 
 .tbl2 td {
@@ -120,4 +155,9 @@ button:disabled {
 
 .tbl2 td:first-child {
   border-right: none;
+}
+
+.checkbox:active {
+  background-color: #e5c04d;
+  border-color: #D5B45B;
 }

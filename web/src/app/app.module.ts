@@ -12,6 +12,7 @@ import { MyProjectPageComponent } from './my-project-page/my-project-page.compon
 import { MyProjectComponent } from './components/my-project/my-project.component';
 import {FormsModule} from "@angular/forms";
 import {SearchPipe} from "./pipes/search.pipe";
+import {NgxPaginationModule} from "ngx-pagination";
 
 const routes = [
   {path: '', component: HomePageComponent},
@@ -35,7 +36,8 @@ const routes = [
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(routes),
-    FormsModule
+    FormsModule,
+    NgxPaginationModule
   ],
   providers: [],
   bootstrap: [AppComponent]
