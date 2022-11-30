@@ -6,7 +6,7 @@ import {IRequest} from "../models/request.model";
 @Injectable({
   providedIn: 'root'
 })
-export class MyProjectServices {
+export class DatabaseProjectServices {
   constructor(private http: HttpClient) {
   }
 

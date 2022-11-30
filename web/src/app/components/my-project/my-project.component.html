@@ -3,43 +3,24 @@
   <tr class = "t">
     <th class = "h1">{{myProject.Name}}</th>
     <th class = "h2">Статус</th>
-    <th class = "h3">
-      <a href="myprojects#settings" (click)="clickOnSettings()">Настройки</a></th>
+    <th class = "h3"
+        [ngClass]="{
+        'set' : settings}">
+      <a href="myprojects#settings"
+         (click)="clickOnSettings()">Настройки</a></th>
   </tr>
   </thead>
 </table>
 
 <br>
-<div class="settings" id ="settings">
+<div class="settings" id ="settings" *ngIf="settings">
   <table id="table2" class="tbl2">
     <tbody>
-    <tr>
-      <td>
-        <input type="checkbox" id="checked1">
-        <label for="checked1">График 1</label>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <input type="checkbox" id="checked2">
-        <label for="checked2">График 2</label>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <input type="checkbox" id="checked3">
-        <label for="checked3">Kfkkfkfkfkfkkkfk</label>
-      </td>
+    <tr *ngFor="let box of checkboxes">
+      <td><input type="checkbox" class="checkbox" [(ngModel)]="box.chosen">{{box.name}}</td>
     </tr>
     </tbody>
   </table>
-<!--  <figcaption>
-  <input type="checkbox" id="checked1">
-  <label for="checked1">График 1</label>
-  <br>
-  <input type="checkbox" id="checked2">
-  <label for="checked2">График 2</label>
-  </figcaption>-->
 </div>
 
 <table class = "tbl" id="table1" *ngIf="!settings">
@@ -68,8 +49,15 @@
 </table>
 <br>
 
-<button class="btn" *ngIf="!settings" [disabled]="processing"
-
-  (click)="processProject(myProject.Name)">
+<button class="btn" *ngIf="!settings" [disabled]="!processing">
+<!--  (click)="processProject(myProject.Name)">-->
   Посмотреть
 </button>
+
+<button class="btn" *ngIf="settings" [disabled]="noneSelected()"
+        (click)="processProject()">
+  Обработать
+</button>
+<br>
+<br>
+<br>

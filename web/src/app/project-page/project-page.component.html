@@ -1,21 +1,34 @@
-<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
-
 <p *ngIf="loading" class="text-center text-lg">Loading...</p>
 
 <div class="d2">
-    <input placeholder="Искать здесь..." id="search-project" type="text" class="validate" [(ngModel)]="searchNameStr">
+    <input placeholder="Поиск по странице..."
+           id="search-project"
+           type="text"
+           class="validate"
+           [(ngModel)]="searchName"
+           (keyup.enter)="getSearchProjects()"
+    >
 </div>
 
 <table class="tbl">
   <thead>
   <tr>
-    <th>Название</th>
-    <th>URL</th>
-    <th>Действие</th>
+    <th class="th1">Название</th>
+    <th class="th2">URL</th>
+    <th class="th3">Действие</th>
   </tr>
   </thead>
 </table>
 
-<app-project *ngFor="let project of projects | search_name: searchNameStr"
+<app-project *ngFor="let project of projects | paginate: {
+                                        itemsPerPage: 10,
+                                        currentPage: pageInfo.currentPage,
+                                        totalItems: pageInfo.projectsCount
+                                        }"
              [project]= "project">
 </app-project>
+<br>
+<pagination-controls
+  (pageChange)="gty((pageInfo.currentPage = $event))">
+</pagination-controls>
+<!--class="pagi"-->
