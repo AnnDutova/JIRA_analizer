@@ -38,11 +38,40 @@ create table if not exists "statusChange" (
     constraint "fk_statusChange_author" foreign key (authorId) references author(id) MATCH FULL
 );
 
-create table if not exists "comments" (
-    authorId int not null,
-    issueId int not null,
-    changeTime timestamp not null,
-    content text not null,
-    constraint "fk_comments_author" foreign key (authorId) references author(id) MATCH FULL,
-    constraint "fk_comments_issues" foreign key (issueId) references issues(id) MATCH FULL
+create table if not exists "openTaskTime" (
+    projectId int not null,
+    createdTime timestamp not null,
+    data json not null,
+    constraint "fk_openTaskTime_project" foreign key (projectId) references project(id) MATCH FULL
+);
+
+create table if not exists "taskStateTime" (
+    projectId int not null,
+    createdTime timestamp not null,
+    data json not null,
+    state text not null,
+    constraint "fk_taskStateTime_project" foreign key (projectId) references project(id) MATCH FULL
+);
+
+create table if not exists "complexityTaskTime" (
+    projectId int not null,
+    createdTime timestamp not null,
+    data json not null,
+    constraint "fk_complexityTaskTime_project" foreign key (projectId) references project(id) MATCH FULL
+);
+
+create table if not exists "activityByTask" (
+    projectId int not null,
+    createdTime timestamp not null,
+    data json not null,
+    state text not null,
+    constraint "fk_activityByTask_project" foreign key (projectId) references project(id) MATCH FULL
+);
+
+create table if not exists "taskPriorityCount" (
+    projectId int not null,
+    createdTime timestamp not null,
+    data json not null,
+    state text not null,
+    constraint "fk_taskPriorityCount_project" foreign key (projectId) references project(id) MATCH FULL
 );
