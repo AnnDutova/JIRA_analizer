@@ -11,6 +11,12 @@ import (
 func main() {
 	router := mux.NewRouter()
 
+	router.HandleFunc("/api/v1/projects",
+		controllers.GetProjectsFor).Methods("GET")
+
+	router.HandleFunc("/api/v1/projects/{id:[0-9]+}",
+		controllers.GetProjectAnalytic).Methods("GET")
+
 	router.HandleFunc("/api/v1/connector/projects",
 		controllers.GetAllProjectsFromConnector).Methods("GET")
 
