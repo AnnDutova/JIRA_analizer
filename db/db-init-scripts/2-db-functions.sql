@@ -1,6 +1,6 @@
 create or replace procedure insertIssue(issue_id int, project_title text, project_id int, author_name text, assigned_name text,
-                                        key_ text, createTime_ timestamp, closedTime_ timestamp, updatedTime_ timestamp, summary_ text, description_ text, type_ text,
-                                        priority_ text, status_  text, timeSpent_ bigint)
+key_ text, createTime_ timestamp, closedTime_ timestamp, updatedTime_ timestamp, summary_ text, description_ text, type_ text,
+priority_ text, status_  text, timeSpent_ bigint)
     LANGUAGE plpgsql
 as $$
 Declare author_id int;
@@ -100,8 +100,8 @@ END;
 $$;
 
 create or replace procedure insertOrUpdateIssue(issue_id int, project_title text, project_id int, author_name text, assigned_name text,
-                                                key_ text, createTime_ timestamp, closedTime_ timestamp, updatedTime_ timestamp, summary_ text, description_ text, type_ text,
-                                                priority_ text, status_  text, timeSpent_ bigint)
+key_ text, createTime_ timestamp, closedTime_ timestamp, updatedTime_ timestamp, summary_ text, description_ text, type_ text,
+priority_ text, status_  text, timeSpent_ bigint)
     LANGUAGE plpgsql
 as $$
 BEGIN
@@ -132,3 +132,60 @@ BEGIN
     return lastTime;
 END;
 $$;
+
+
+create or replace procedure addOpenTaskTime(id int, createTime timestamp, context json)
+    LANGUAGE plpgsql
+as $$
+BEGIN
+    if exists(Select op.data from "openTaskTime" as op where op.projectid = id) then
+        Delete from "openTaskTime" where projectid = id;
+    end if;
+    INSERT INTO "openTaskTime"(projectId, createdTime, data) VALUES (id, createTime, context);
+END;
+$$;
+
+create or replace procedure addComplexityTaskTime(id int, createTime timestamp, context json)
+    LANGUAGE plpgsql
+as $$
+BEGIN
+    if exists(Select op.data from "complexityTaskTime" as op where op.projectid = id) then
+        Delete from "complexityTaskTime" where projectid = id;
+    end if;
+    INSERT INTO "complexityTaskTime"(projectId, createdTime, data) VALUES (id, createTime, context);
+END;
+$$;
+
+create or replace procedure addTaskStateTime(id int, createTime timestamp, context json, state_ text)
+    LANGUAGE plpgsql
+as $$
+BEGIN
+    if exists(Select op.data from "taskStateTime" as op where op.projectid = id and op.state = state_) then
+        Delete from "taskStateTime" where projectid = id and state = state_;
+    end if;
+    INSERT INTO "taskStateTime"(projectId, createdTime, data, state) VALUES (id, createTime, context, state_);
+END;
+$$;
+
+create or replace procedure addActivityByTask(id int, createTime timestamp, context json, state_ text)
+    LANGUAGE plpgsql
+as $$
+BEGIN
+    if exists(Select op.data from "activityByTask" as op where op.projectid = id and op.state = state_) then
+        Delete from "activityByTask" where projectid = id and state = state_;
+    end if;
+    INSERT INTO "activityByTask"(projectId, createdTime, data, state) VALUES (id, createTime, context, state_);
+END;
+$$;
+
+create or replace procedure addTaskPriorityCount(id int, createTime timestamp, context json, state_ text)
+    LANGUAGE plpgsql
+as $$
+BEGIN
+    if exists(Select op.data from "taskPriorityCount" as op where op.projectid = id and op.state = state_) then
+        Delete from "taskPriorityCount" where projectid = id and state = state_;
+    end if;
+    INSERT INTO "taskPriorityCount"(projectId, createdTime, data, state) VALUES (id, createTime, context, state_);
+END;
+$$;
+
