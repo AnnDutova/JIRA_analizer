@@ -1,0 +1,18 @@
+<div class="compare-body">
+<div class="header">
+  <h3>Сравнение</h3>
+</div>
+<div class="body">
+  <p>Выберите проекты на основе которых будет производиться сравнение (2-3)</p>
+  <project-checkbox (onChecked)="childOnChecked($event)"
+                    *ngFor="let project of projects" [project]= "project">
+
+  </project-checkbox>
+  <button class="btn" (click)="onClickCompare()">Сравнить</button>
+</div>
+</div>
+
+
+
+
+

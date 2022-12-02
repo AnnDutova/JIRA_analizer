@@ -13,12 +13,19 @@ import { MyProjectComponent } from './components/my-project/my-project.component
 import {FormsModule} from "@angular/forms";
 import {SearchPipe} from "./pipes/search.pipe";
 import {NgxPaginationModule} from "ngx-pagination";
+import { ComparePageComponent } from './compare-page/compare-page.component';
+import {ProjectWithCheckboxComponent} from "./components/checkbox-with-project/checkbox-with-project.component";
+import { CompareProjectPageComponent } from './compare-project-page/compare-project-page.component';
+import {ChartModule} from "angular-highcharts";
 
 const routes = [
   {path: '', component: HomePageComponent},
   {path: 'setup', component: SetupPageComponent},
   {path: 'projects', component: ProjectPageComponent},
+  {path: 'compare', component: ComparePageComponent},
   {path: 'myprojects', component: MyProjectPageComponent},
+  {path: 'compare-projects', component: CompareProjectPageComponent}
+
 ]
 
 @NgModule({
@@ -30,14 +37,18 @@ const routes = [
     ProjectPageComponent,
     MyProjectComponent,
     MyProjectPageComponent,
-    SearchPipe
+    SearchPipe,
+    ComparePageComponent,
+    ProjectWithCheckboxComponent,
+    CompareProjectPageComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(routes),
     FormsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    ChartModule
   ],
   providers: [],
   bootstrap: [AppComponent]
