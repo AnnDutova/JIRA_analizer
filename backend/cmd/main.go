@@ -23,6 +23,12 @@ func main() {
 	router.HandleFunc("/api/v1/connector/updateProject",
 		controllers.AddProjectToDB).Methods("POST")
 
+	router.HandleFunc("/api/v1/graph/{group:[0-9]}",
+		controllers.GetGraphByGroup).Methods("GET")
+
+	router.HandleFunc("/api/v1/compare/{group:[0-9]}",
+		controllers.GetCompareByGraphGroup).Methods("GET")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
