@@ -23,6 +23,7 @@ export class ProjectPageComponent implements OnInit {
     this.projectService.getAll(this.start_page, this.searchName).subscribe(projects => {
       console.log(projects)
       this.projects = projects.data
+      console.log("test", projects.data)
       this.loading = false
       this.pageInfo = projects.pageInfo
     })

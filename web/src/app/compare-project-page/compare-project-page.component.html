@@ -1,0 +1,36 @@
+<div class="body">
+  <h3>
+    Cравнение
+  </h3>
+  <div class="container">
+    <table class = "tbl" id="table1">
+      <thead>
+      <tr class="soft_stat_header" id="soft_stat_header">
+        <th>Сухая статистика</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr id="summary_task_count">
+        <td>Общее количество задач</td>
+      </tr>
+      <tr id = "open_task_count">
+        <td>Количество открытых задач</td>
+      </tr>
+      <tr id = "close_task_count">
+        <td>Количество закрытых задач</td>
+      </tr>
+      <tr id = "average_task_time">
+        <td>Среднее время выполнения задачи(часы)</td>
+      </tr>
+      <tr id = "average_task_count">
+        <td>Среднее количество заведенных задач в день за последнюю неделю</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="task-state" [chart]="taskStateChart"></div>
+    <div class="open-task" [chart]="openTaskChart"></div>
+  </div>
+
+</div>
+
