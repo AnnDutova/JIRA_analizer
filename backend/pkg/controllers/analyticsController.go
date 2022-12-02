@@ -3,7 +3,6 @@ package controllers
 import (
 	"Backend/pkg/services"
 	u "Backend/pkg/utils"
-	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -23,14 +22,16 @@ var GetGraphByGroup = func(w http.ResponseWriter, r *http.Request) {
 	case 1:
 		getFirstGraphGroup(w, project)
 	case 2:
-		log.Print("Graph 2")
+		getSecondGraphGroup(w, project)
 	case 3:
-		log.Print("Graph 3")
+		getThirdGraphGroup(w, project)
 	case 4:
 		getForthGraphGroup(w, project)
 	case 5:
-		log.Print("Graph 5 Priority")
+		getFifthGraphGroup(w, project)
 	case 6:
+		getSixGraphGroup(w, project)
+	case 7:
 		resp, status := services.GetReturnTheMostActiveCreators(project)
 		u.RespondAny(w, resp, status)
 	}
@@ -47,6 +48,22 @@ func getFirstGraphGroup(w http.ResponseWriter, project string) {
 	u.RespondVariable(w, http.StatusOK, data...)
 }
 
+func getSecondGraphGroup(w http.ResponseWriter, project string) {
+	resp, status := services.GetReturnTaskStateTime(project)
+	if status != http.StatusOK {
+		u.RespondAny(w, nil, http.StatusInternalServerError)
+	}
+	u.RespondAny(w, resp, http.StatusOK)
+}
+
+func getThirdGraphGroup(w http.ResponseWriter, project string) {
+	data, status := services.GetReturnActivityByTask(project)
+	if status != http.StatusOK {
+		u.RespondAny(w, nil, http.StatusInternalServerError)
+	}
+	u.RespondAny(w, data, http.StatusOK)
+}
+
 func getForthGraphGroup(w http.ResponseWriter, project string) {
 	var data []any
 	resp2, status := services.GetReturnTimeSpentOnAllTasks(project)
@@ -54,5 +71,25 @@ func getForthGraphGroup(w http.ResponseWriter, project string) {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
 	data = append(data, resp2)
+	u.RespondVariable(w, http.StatusOK, data...)
+}
+
+func getFifthGraphGroup(w http.ResponseWriter, project string) {
+	var data []any
+	resp, status := services.GetReturnPriorityCountOfProjectOpen(project)
+	if status != http.StatusOK {
+		u.RespondAny(w, nil, http.StatusInternalServerError)
+	}
+	data = append(data, resp)
+	u.RespondVariable(w, http.StatusOK, data...)
+}
+
+func getSixGraphGroup(w http.ResponseWriter, project string) {
+	var data []any
+	resp, status := services.GetReturnPriorityCountOfProjectClose(project)
+	if status != http.StatusOK {
+		u.RespondAny(w, nil, http.StatusInternalServerError)
+	}
+	data = append(data, resp)
 	u.RespondVariable(w, http.StatusOK, data...)
 }
