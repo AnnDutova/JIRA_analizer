@@ -329,7 +329,7 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectClose(projectName strin
 	var request []byte
 
 	if row := r.db.Raw("Select createdTime,"+" data from \"taskPriorityCount\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Close'", projectName).Row(); row.Err() != nil {
+		"left join project on projectId = project.id where project.title = ? and state = 'Closed'", projectName).Row(); row.Err() != nil {
 		return nil, row.Err()
 	} else {
 		err := row.Scan(&creationTime, &request)
@@ -369,7 +369,7 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectClose(projectName strin
 func (r *AnalyticRepository) returnPriorityGraphClose(projectName string) ([]models.GraphOutput, error) {
 	var graph []models.GraphOutput
 	rows, err := r.db.Raw("Select i.priority, "+" count(i.priority) as count from issues as i "+
-		" left join project on i.projectId = project.id where project.title = ? and i.status = 'Close' "+
+		" left join project on i.projectId = project.id where project.title = ? and i.status = 'Closed' "+
 		" group by priority order by count desc", projectName).Rows()
 
 	if err != nil {
