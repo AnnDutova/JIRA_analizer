@@ -18,4 +18,9 @@ export class DatabaseProjectServices {
   getProjectStatByID(id: string): Observable<IRequestObject> {
     return this.http.get<IRequestObject>('http://localhost:8000/api/v1/projects/'+id)
   }
+
+  getComplitedGraph(taskNumber: string, projectName: Array<string>): Observable<IRequestObject> {
+    let projectsString = 'http://localhost:8000/api/v1/compare/'+taskNumber+'?project='+projectName.toString()
+    return this.http.get<IRequestObject>(projectsString)
+  }
 }
