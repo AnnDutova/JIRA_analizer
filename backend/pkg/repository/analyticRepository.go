@@ -867,7 +867,8 @@ func (r *AnalyticRepository) returnCountTimeOfReopenedStateInCloseTask(projectNa
 		"left join project on i.projectId = project.id "+
 		"left join \"statusChange\" as sc on sc.issueId = i.id "+
 		"where project.title = ? and i.status = 'Closed' and "+
-		"(sc.fromstatus = 'Reopened' or sc.tostatus='Reopened')", projectName).Rows()
+		"(sc.fromstatus = 'Reopened' or sc.tostatus='Reopened') "+
+		"order by i.id, sc.changetime", projectName).Rows()
 	if err != nil {
 		return nil, err
 	}
@@ -876,7 +877,7 @@ func (r *AnalyticRepository) returnCountTimeOfReopenedStateInCloseTask(projectNa
 		id         int
 		changeTime time.Time
 		fromStatus string
-		tostatus   string
+		toStatus   string
 	}
 
 	type mapElement struct {
@@ -889,12 +890,15 @@ func (r *AnalyticRepository) returnCountTimeOfReopenedStateInCloseTask(projectNa
 
 	for rows.Next() {
 		el := element{}
-		if err = rows.Scan(&el.id, &el.changeTime, &el.fromStatus, &el.tostatus); err != nil {
+		var fromStatus, toStatus string
+		if err = rows.Scan(&el.id, &el.changeTime, &fromStatus, &toStatus); err != nil {
 			return nil, err
 		}
+		el.toStatus = toStatus
+		el.fromStatus = fromStatus
 		if variable, ok := graphStruct[el.id]; ok {
 			variable.count += 1
-			if variable.count%2 == 0 {
+			if el.fromStatus == "Reopened" {
 				dur := el.changeTime.Sub(variable.lastData)
 				variable.lastData = el.changeTime
 				variable.difference = variable.difference.Add(dur)
@@ -995,7 +999,7 @@ func (r *AnalyticRepository) returnCountTimeOfInProgressStateInCloseTask(project
 		id         int
 		changeTime time.Time
 		fromStatus string
-		tostatus   string
+		toStatus   string
 	}
 
 	type mapElement struct {
@@ -1008,12 +1012,16 @@ func (r *AnalyticRepository) returnCountTimeOfInProgressStateInCloseTask(project
 
 	for rows.Next() {
 		el := element{}
-		if err = rows.Scan(&el.id, &el.changeTime, &el.fromStatus, &el.tostatus); err != nil {
+		var fromStatus, toStatus string
+		if err = rows.Scan(&el.id, &el.changeTime, &fromStatus, &toStatus); err != nil {
 			return nil, err
 		}
+		el.toStatus = toStatus
+		el.fromStatus = fromStatus
+
 		if variable, ok := graphStruct[el.id]; ok {
 			variable.count += 1
-			if variable.count%2 == 0 {
+			if el.fromStatus == "In Progress" {
 				dur := el.changeTime.Sub(variable.lastData)
 				variable.lastData = el.changeTime
 				variable.difference = variable.difference.Add(dur)
