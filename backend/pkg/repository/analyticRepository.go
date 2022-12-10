@@ -957,7 +957,7 @@ func (r *AnalyticRepository) ReturnCountTimeOfInProgressStateInCloseTask(project
 			}
 			return graph, nil
 		} else {
-			graph, err = r.returnCountTimeOfReopenedStateInCloseTask(projectName)
+			graph, err = r.returnCountTimeOfInProgressStateInCloseTask(projectName)
 			if err != nil {
 				return nil, err
 			}
