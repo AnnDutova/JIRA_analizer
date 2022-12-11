@@ -357,7 +357,7 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectClose(projectName strin
 			if res, err := json.Marshal(graph); err != nil {
 				return nil, err
 			} else {
-				if err = r.db.Exec("call addTaskPriorityCount(?, ?, ?, ?)", id, time.Now(), res, "Close").Error; err != nil {
+				if err = r.db.Exec("call addTaskPriorityCount(?, ?, ?, ?)", id, time.Now(), res, "Closed").Error; err != nil {
 					return nil, err
 				}
 			}
@@ -867,7 +867,8 @@ func (r *AnalyticRepository) returnCountTimeOfReopenedStateInCloseTask(projectNa
 		"left join project on i.projectId = project.id "+
 		"left join \"statusChange\" as sc on sc.issueId = i.id "+
 		"where project.title = ? and i.status = 'Closed' and "+
-		"(sc.fromstatus = 'Reopened' or sc.tostatus='Reopened')", projectName).Rows()
+		"(sc.fromstatus = 'Reopened' or sc.tostatus='Reopened') "+
+		"order by i.id, sc.changetime ", projectName).Rows()
 	if err != nil {
 		return nil, err
 	}
@@ -956,7 +957,7 @@ func (r *AnalyticRepository) ReturnCountTimeOfInProgressStateInCloseTask(project
 			}
 			return graph, nil
 		} else {
-			graph, err = r.returnCountTimeOfReopenedStateInCloseTask(projectName)
+			graph, err = r.returnCountTimeOfInProgressStateInCloseTask(projectName)
 			if err != nil {
 				return nil, err
 			}

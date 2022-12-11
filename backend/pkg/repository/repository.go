@@ -42,13 +42,17 @@ type IAnalytic interface {
 
 type ICompareGraphs interface {
 	CheckExistenceOnOpenTaskTimeTable(projectName string) ([]models.GraphOutput, error)
+
 	CheckExistenceOnTaskStateTimeTableOpen(projectName string) ([]models.GraphOutput, error)
 	CheckExistenceOnTaskStateTimeTableResolved(projectName string) ([]models.GraphOutput, error)
 	CheckExistenceOnTaskStateTimeTableReopened(projectName string) ([]models.GraphOutput, error)
 	CheckExistenceOnTaskStateTimeTableInProgress(projectName string) ([]models.GraphOutput, error)
+
 	CheckExistenceOnActivityByTaskTableClose(projectName string) ([]models.GraphOutput, error)
 	CheckExistenceOnActivityByTaskTableOpen(projectName string) ([]models.GraphOutput, error)
+
 	CheckExistenceOnComplexityTaskTimeTable(projectName string) ([]models.GraphOutput, error)
+
 	CheckExistenceOnTaskPriorityCountTableOpen(projectName string) ([]models.GraphOutput, error)
 	CheckExistenceOnTaskPriorityCountTableClose(projectName string) ([]models.GraphOutput, error)
 }
