@@ -1,6 +1,6 @@
 import { Options } from 'highcharts';
 
-export const openTaskChartOptions: Options = {
+export const taskPriorityChartOptions: Options = {
   chart: {
     type: 'column',
   },
@@ -8,7 +8,7 @@ export const openTaskChartOptions: Options = {
     enabled: false,
   },
   title: {
-    text: 'Open task time statistic',
+    text: 'Task priority',
   },
   yAxis: {
     visible: false,
