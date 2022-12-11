@@ -21,7 +21,7 @@ export class ProjectWithCheckboxComponent implements OnInit {
   }
 
   changed(isChecked: any) {
-    console.log("Child", this.isChecked, this.project.Name)
+    //console.log("Child", this.isChecked, this.project.Name)
     this.onChecked.emit(new CheckedProject(this.project.Name, this.isChecked, this.project.Id));
   }
 }

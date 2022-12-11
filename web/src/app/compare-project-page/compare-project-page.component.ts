@@ -14,7 +14,6 @@ import {taskStateChartOptions} from "./helpers/taskStateChartOptions";
 export class CompareProjectPageComponent implements OnInit {
   projects: string[] = []
   ids: string[] = []
-  text: ["Общее количество задач", ""]
   resultReq: ReqData[] = []
   taskStateChart = new Chart(taskStateChartOptions)
   openTaskChart = new Chart(openTaskChartOptions)

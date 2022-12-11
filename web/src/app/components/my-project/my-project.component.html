@@ -16,9 +16,9 @@
 <div class="settings" id ="settings" *ngIf="settings">
   <table id="table2" class="tbl2">
     <tbody>
-    <tr *ngFor="let box of checkboxes">
-      <td><input type="checkbox" class="checkbox" [(ngModel)]="box.chosen">{{box.name}}</td>
-    </tr>
+    <projects-settings (onChecked)="childOnChecked($event)"
+                      *ngFor="let box of checkboxes" [box]= "box">
+    </projects-settings>
     </tbody>
   </table>
 </div>

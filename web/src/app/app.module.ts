@@ -15,8 +15,10 @@ import {SearchPipe} from "./pipes/search.pipe";
 import {NgxPaginationModule} from "ngx-pagination";
 import { ComparePageComponent } from './compare-page/compare-page.component';
 import {ProjectWithCheckboxComponent} from "./components/checkbox-with-project/checkbox-with-project.component";
-import { CompareProjectPageComponent } from './compare-project-page/compare-project-page.component';
+import {CompareProjectPageComponent } from './compare-project-page/compare-project-page.component';
 import {ChartModule} from "angular-highcharts";
+import {CheckboxWithSettingsComponent} from "./components/checkbox-with-settings/checkbox-with-settings.component";
+import { ProjectStatPageComponent } from './project-stat-page/project-stat-page.component';
 
 const routes = [
   {path: '', component: HomePageComponent},
@@ -24,8 +26,9 @@ const routes = [
   {path: 'projects', component: ProjectPageComponent},
   {path: 'compare', component: ComparePageComponent},
   {path: 'myprojects', component: MyProjectPageComponent},
-  {path: 'compare-projects', component: CompareProjectPageComponent}
-
+  {path: 'compare-projects', component: CompareProjectPageComponent},
+  {path: 'projects-settings', component: CheckboxWithSettingsComponent},
+  {path: 'project-stat', component: ProjectStatPageComponent}
 ]
 
 @NgModule({
@@ -40,7 +43,9 @@ const routes = [
     SearchPipe,
     ComparePageComponent,
     ProjectWithCheckboxComponent,
-    CompareProjectPageComponent
+    CompareProjectPageComponent,
+    CheckboxWithSettingsComponent,
+    ProjectStatPageComponent
   ],
   imports: [
     BrowserModule,
