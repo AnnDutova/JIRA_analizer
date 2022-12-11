@@ -22,7 +22,6 @@ import {complexityTaskChartOptions} from "./helpers/complexityTaskChartOptions";
 export class CompareProjectPageComponent implements OnInit {
   projects: string[] = []
   ids: string[] = []
-  text: ["Общее количество задач", ""]
   resultReq: ReqData[] = []
   openTaskChart = new Chart()
   openStateChart = new Chart()
