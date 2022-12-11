@@ -4,6 +4,7 @@ import {CheckedProject} from "../../models/check-element.model";
 import {CheckedSetting} from "../../models/check-setting.model";
 import {SettingBox} from "../../models/setting.model";
 import {Router} from "@angular/router";
+import {DatabaseProjectServices} from "../../services/database-project.services";
 
 @Component({
   selector: 'app-my-project',
@@ -13,12 +14,13 @@ import {Router} from "@angular/router";
 export class MyProjectComponent implements OnInit{
   @Output() onChecked: EventEmitter<any> = new EventEmitter<{}>();
   @Input() myProject: IProj
+  stat: ProjectStat = new ProjectStat()
   processing: boolean
   settings: boolean
   checkboxes: SettingBox[] = []
   setting: Map<any, any> = new Map();
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private dbProjectService: DatabaseProjectServices) {
   }
 
   ngOnInit(): void{
@@ -30,6 +32,20 @@ export class MyProjectComponent implements OnInit{
     this.checkboxes.push(new SettingBox("График сложности задач", false, 4 ))
     this.checkboxes.push(new SettingBox("График, отражающий приоритетность всех задач", false, 5 ))
     this.checkboxes.push(new SettingBox("График, отражающий приоритетность закрытых задач", false, 6 ))
+
+
+
+    this.dbProjectService.getProjectStatByID(this.myProject.Id.toString()).subscribe(projects => {
+
+      this.stat.AverageIssuesCount = projects.data["allIssuesCount"]
+      this.stat.OpenIssuesCount = projects.data["openIssuesCount"]
+      this.stat.AllIssuesCount = projects.data["allIssuesCount"]
+      this.stat.AverageTime = projects.data["averageTime"]
+      this.stat.CloseIssuesCount = projects.data["closeIssuesCount"]
+
+      console.log(projects.data)
+      console.log(this.stat)
+    })
   }
 
   processProject() {
@@ -71,4 +87,12 @@ export class MyProjectComponent implements OnInit{
     console.log("Parent ", setting.ProjectName, setting.BoxId, this.checkboxes[Number(setting.BoxId) - 1].Checked)
   }
 
+}
+
+class ProjectStat {
+  AllIssuesCount: number;
+  AverageIssuesCount: number;
+  AverageTime: number;
+  CloseIssuesCount: number;
+  OpenIssuesCount: number;
 }
