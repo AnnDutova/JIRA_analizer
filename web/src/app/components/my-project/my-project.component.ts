@@ -33,8 +33,6 @@ export class MyProjectComponent implements OnInit{
     this.checkboxes.push(new SettingBox("График, отражающий приоритетность всех задач", false, 5 ))
     this.checkboxes.push(new SettingBox("График, отражающий приоритетность закрытых задач", false, 6 ))
 
-
-
     this.dbProjectService.getProjectStatByID(this.myProject.Id.toString()).subscribe(projects => {
 
       this.stat.AverageIssuesCount = projects.data["allIssuesCount"]
@@ -52,7 +50,7 @@ export class MyProjectComponent implements OnInit{
     this.processing = !this.processing
     console.log(this.myProject, this.setting)
     let ids:  number[] = []
-    let items = this.myProject.Id
+    let items = this.myProject.Name
 
     this.checkboxes.forEach((box: SettingBox) =>{
       if (box.Checked){

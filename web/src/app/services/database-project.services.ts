@@ -23,4 +23,9 @@ export class DatabaseProjectServices {
     let projectsString = 'http://localhost:8000/api/v1/compare/'+taskNumber+'?project='+projectName.toString()
     return this.http.get<IRequestObject>(projectsString)
   }
+
+  getGraph(taskNumber: string, projectName: string): Observable<IRequestObject> {
+    let projectsString = 'http://localhost:8000/api/v1/graph/'+taskNumber+'?project='+projectName
+    return this.http.get<IRequestObject>(projectsString)
+  }
 }
