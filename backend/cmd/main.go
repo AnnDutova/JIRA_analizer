@@ -23,8 +23,14 @@ func main() {
 	router.HandleFunc("/api/v1/connector/updateProject",
 		controllers.AddProjectToDB).Methods("POST")
 
-	router.HandleFunc("/api/v1/graph/{group:[0-9]}",
+	router.HandleFunc("/api/v1/graph/get/{group:[0-9]}",
 		controllers.GetGraphByGroup).Methods("GET")
+
+	router.HandleFunc("/api/v1/graph/make/{group:[0-9]}",
+		controllers.MakeGraphByGroup).Methods("POST")
+
+	router.HandleFunc("/api/v1/isAnalyzed",
+		controllers.IsAnalyzed).Methods("GET")
 
 	router.HandleFunc("/api/v1/compare/{group:[0-9]}",
 		controllers.GetCompareByGraphGroup).Methods("GET")

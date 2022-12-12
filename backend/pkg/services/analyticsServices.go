@@ -27,7 +27,6 @@ func GetReturnTimeCountOfIssuesInCloseState(project string) (map[string]interfac
 	} else {
 		resp["data"] = nil
 	}
-
 	return resp, http.StatusOK
 }
 
@@ -48,15 +47,15 @@ func GetReturnTimeSpentOnAllTasks(project string) (map[string]interface{}, int) 
 		}
 		data["count"] = category
 		data["categories"] = u.SortMinutesCategories(category)
+		resp["data"] = data
 	} else {
-		data["count"] = nil
-		data["categories"] = nil
+		resp["data"] = nil
 	}
-	resp["data"] = data
+
 	return resp, http.StatusOK
 }
 
-func GetReturnTheMostActiveCreators(project string) (map[string]interface{}, int) {
+/*func GetReturnTheMostActiveCreators(project string) (map[string]interface{}, int) {
 	issues, err := repository.DbCon.GetRepository().ReturnTheMostActiveCreators(project)
 	if err != nil {
 		return u.Message(false, err.Error(),
@@ -78,7 +77,7 @@ func GetReturnTheMostActiveCreators(project string) (map[string]interface{}, int
 	}
 
 	return resp, http.StatusOK
-}
+}*/
 
 func GetReturnPriorityCountOfProjectOpen(project string) (map[string]interface{}, int) {
 	data := make(map[string]interface{}, 0)
@@ -99,11 +98,10 @@ func GetReturnPriorityCountOfProjectOpen(project string) (map[string]interface{}
 		}
 		data["count"] = names
 		data["categories"] = category
+		resp["data"] = data
 	} else {
-		data["count"] = nil
-		data["categories"] = nil
+		resp["data"] = nil
 	}
-	resp["data"] = data
 	return resp, http.StatusOK
 }
 
@@ -126,11 +124,10 @@ func GetReturnPriorityCountOfProjectClose(project string) (map[string]interface{
 		}
 		data["count"] = names
 		data["categories"] = category
+		resp["data"] = data
 	} else {
-		data["count"] = nil
-		data["categories"] = nil
+		resp["data"] = nil
 	}
-	resp["data"] = data
 	return resp, http.StatusOK
 }
 
@@ -208,8 +205,13 @@ func GetReturnTaskStateTime(project string) (map[string]interface{}, int) {
 		data["progress"] = nil
 		category["progress"] = nil
 	}
-	data["categories"] = category
-	resp["data"] = data
+
+	if len(openTasks) > 0 && len(reopenedTask) > 0 && len(resolveTask) > 0 && len(inProgressTask) > 0 {
+		data["categories"] = category
+		resp["data"] = data
+	} else {
+		resp["data"] = nil
+	}
 	return resp, http.StatusOK
 }
 
@@ -277,7 +279,122 @@ func GetReturnActivityByTask(project string) (map[string]interface{}, int) {
 	} else {
 		category["all"] = nil
 	}
-	data["categories"] = category
+	if len(openTasks) > 0 && len(closeTasks) > 0 {
+		data["categories"] = category
+		resp["data"] = data
+	} else {
+		resp["data"] = nil
+	}
+	return resp, http.StatusOK
+}
+
+func MakeTimeCountOfIssuesInCloseState(project string) (map[string]interface{}, int) {
+	err := repository.DbCon.GetRepository().MakeTimeCountOfIssuesInCloseState(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakeTimeCountOfIssuesInCloseState", project), http.StatusBadRequest
+	}
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend MakeTimeCountOfIssuesInCloseState", project)
+	return resp, http.StatusOK
+}
+
+func MakeTaskStateTime(project string) (map[string]interface{}, int) {
+	err := repository.DbCon.GetRepository().MakeCountTimeOfOpenStateInCloseTask(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakeCountTimeOfOpenStateInCloseTask", project), http.StatusBadRequest
+	}
+	err = repository.DbCon.GetRepository().MakeCountTimeOfResolvedStateInCloseTask(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakeCountTimeOfResolvedStateInCloseTask", project), http.StatusBadRequest
+	}
+
+	err = repository.DbCon.GetRepository().MakeCountTimeOfReopenedStateInCloseTask(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakeCountTimeOfReopenedStateInCloseTask", project), http.StatusBadRequest
+	}
+
+	err = repository.DbCon.GetRepository().MakeCountTimeOfInProgressStateInCloseTask(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakeCountTimeOfInProgressStateInCloseTask", project), http.StatusBadRequest
+	}
+
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend MakeTaskStateTime", project)
+
+	return resp, http.StatusOK
+}
+
+func MakeActivityByTask(project string) (map[string]interface{}, int) {
+	err := repository.DbCon.GetRepository().MakeCountCloseTaskInDay(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakeCountCloseTaskInDay", project), http.StatusBadRequest
+	}
+	err = repository.DbCon.GetRepository().MakeCountOpenTaskInDay(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakeCountOpenTaskInDay", project), http.StatusBadRequest
+	}
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend MakeActivityByTask", project)
+
+	return resp, http.StatusOK
+}
+
+func MakeTimeSpentOnAllTasks(project string) (map[string]interface{}, int) {
+	err := repository.DbCon.GetRepository().MakeTimeSpentOnAllTasks(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakeTimeSpentOnAllTasks", project), http.StatusBadRequest
+	}
+
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend MakeTimeSpentOnAllTasks", project)
+
+	return resp, http.StatusOK
+}
+
+func MakePriorityCountOfProjectOpen(project string) (map[string]interface{}, int) {
+	err := repository.DbCon.GetRepository().MakePriorityCountOfProjectOpen(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakePriorityCountOfProjectOpen", project), http.StatusBadRequest
+	}
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend MakePriorityCountOfProjectOpen", project)
+
+	return resp, http.StatusOK
+}
+
+func MakePriorityCountOfProjectClose(project string) (map[string]interface{}, int) {
+	err := repository.DbCon.GetRepository().MakePriorityCountOfProjectClose(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakePriorityCountOfProjectClose", project), http.StatusBadRequest
+	}
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend MakePriorityCountOfProjectClose", project)
+
+	return resp, http.StatusOK
+}
+
+func IsAnalyzedGraph(project string) (map[string]interface{}, int) {
+	ok, err := repository.DbCon.GetRepository().IsAnalyzed(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend MakePriorityCountOfProjectClose", project), http.StatusBadRequest
+	}
+
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend IsAnalyzedGraph", project)
+
+	data := make(map[string]interface{}, 1)
+	data["isAnalyzed"] = ok
 	resp["data"] = data
 	return resp, http.StatusOK
 }
