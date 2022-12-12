@@ -24,7 +24,8 @@ type IHistories interface {
 }
 
 type IAnalytic interface {
-	ReturnTheMostActiveCreators(projectName string) ([]models.GraphOutput, error)
+	IsAnalyzed(projectName string) (bool, error)
+	//get
 	ReturnTimeCountOfIssuesInCloseState(projectName string) ([]models.GraphOutput, error)
 	ReturnTimeSpentOnAllTasks(projectName string) ([]models.GraphOutput, error)
 
@@ -38,6 +39,21 @@ type IAnalytic interface {
 	ReturnCountTimeOfResolvedStateInCloseTask(projectName string) ([]models.GraphOutput, error)
 	ReturnCountTimeOfReopenedStateInCloseTask(projectName string) ([]models.GraphOutput, error)
 	ReturnCountTimeOfInProgressStateInCloseTask(projectName string) ([]models.GraphOutput, error)
+
+	//make
+	MakeTimeCountOfIssuesInCloseState(projectName string) error
+	MakeTimeSpentOnAllTasks(projectName string) error
+
+	MakePriorityCountOfProjectOpen(projectName string) error
+	MakePriorityCountOfProjectClose(projectName string) error
+
+	MakeCountOpenTaskInDay(projectName string) error
+	MakeCountCloseTaskInDay(projectName string) error
+
+	MakeCountTimeOfOpenStateInCloseTask(projectName string) error
+	MakeCountTimeOfResolvedStateInCloseTask(projectName string) error
+	MakeCountTimeOfReopenedStateInCloseTask(projectName string) error
+	MakeCountTimeOfInProgressStateInCloseTask(projectName string) error
 }
 
 type ICompareGraphs interface {
