@@ -150,19 +150,19 @@ func GetReturnTaskStateTime(project string) (map[string]interface{}, int) {
 	resolveTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfResolvedStateInCloseTask(project)
 	if err != nil {
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend GetReturnCountTimeOfResolvedStateInCloseTask", project), http.StatusBadRequest
+			"Jira Analyzer Backend ReturnCountTimeOfResolvedStateInCloseTask", project), http.StatusBadRequest
 	}
 
 	reopenedTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfReopenedStateInCloseTask(project)
 	if err != nil {
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend GetReturnCountTimeOfReopenedStateInCloseTask", project), http.StatusBadRequest
+			"Jira Analyzer Backend ReturnCountTimeOfReopenedStateInCloseTask", project), http.StatusBadRequest
 	}
 
 	inProgressTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfInProgressStateInCloseTask(project)
 	if err != nil {
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend GetReturnCountTimeOfInProgressStateInCloseTask", project), http.StatusBadRequest
+			"Jira Analyzer Backend ReturnCountTimeOfInProgressStateInCloseTask", project), http.StatusBadRequest
 	}
 
 	resp := u.Message(true, "success",
@@ -218,16 +218,17 @@ func GetReturnActivityByTask(project string) (map[string]interface{}, int) {
 	closed := make(map[string]interface{}, 0)
 	category := make(map[string]interface{}, 0)
 	data := make(map[string]interface{}, 0)
+	all := make(map[string]interface{}, 0)
 
 	closeTasks, err := repository.DbCon.GetRepository().ReturnCountCloseTaskInDay(project)
 	if err != nil {
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend GetReturnCountCloseTaskInDay", project), http.StatusBadRequest
+			"Jira Analyzer Backend ReturnCountCloseTaskInDay", project), http.StatusBadRequest
 	}
 	openTasks, err := repository.DbCon.GetRepository().ReturnCountOpenTaskInDay(project)
 	if err != nil {
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend GetReturnCountOpenTaskInDay", project), http.StatusBadRequest
+			"Jira Analyzer Backend ReturnCountOpenTaskInDay", project), http.StatusBadRequest
 	}
 
 	resp := u.Message(true, "success",
@@ -263,6 +264,18 @@ func GetReturnActivityByTask(project string) (map[string]interface{}, int) {
 	} else {
 		data["close"] = nil
 		category["close"] = nil
+	}
+	all = u.JoinToMap(openTasks, closeTasks, all)
+	if len(all) > 0 {
+		allCategories, err := u.SortDatesForActivityGraph(all)
+		if err != nil {
+			return u.Message(false, err.Error(),
+				"Jira Analyzer Backend GetReturnActivityByTask. Fail on SortDatesForActivityGraph",
+				"Dates for all categories"), http.StatusBadRequest
+		}
+		category["all"] = allCategories
+	} else {
+		category["all"] = nil
 	}
 	data["categories"] = category
 	resp["data"] = data

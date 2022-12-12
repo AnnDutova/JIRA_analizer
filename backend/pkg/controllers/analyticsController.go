@@ -39,13 +39,11 @@ var GetGraphByGroup = func(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFirstGraphGroup(w http.ResponseWriter, project string) {
-	var data []any
-	resp2, status := services.GetReturnTimeCountOfIssuesInCloseState(project)
+	resp, status := services.GetReturnTimeCountOfIssuesInCloseState(project)
 	if status != http.StatusOK {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
-	data = append(data, resp2)
-	u.RespondVariable(w, http.StatusOK, data...)
+	u.RespondAny(w, resp, http.StatusOK)
 }
 
 func getSecondGraphGroup(w http.ResponseWriter, project string) {
@@ -65,31 +63,25 @@ func getThirdGraphGroup(w http.ResponseWriter, project string) {
 }
 
 func getForthGraphGroup(w http.ResponseWriter, project string) {
-	var data []any
-	resp2, status := services.GetReturnTimeSpentOnAllTasks(project)
+	resp, status := services.GetReturnTimeSpentOnAllTasks(project)
 	if status != http.StatusOK {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
-	data = append(data, resp2)
-	u.RespondVariable(w, http.StatusOK, data...)
+	u.RespondAny(w, resp, http.StatusOK)
 }
 
 func getFifthGraphGroup(w http.ResponseWriter, project string) {
-	var data []any
 	resp, status := services.GetReturnPriorityCountOfProjectOpen(project)
 	if status != http.StatusOK {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
-	data = append(data, resp)
-	u.RespondVariable(w, http.StatusOK, data...)
+	u.RespondAny(w, resp, http.StatusOK)
 }
 
 func getSixGraphGroup(w http.ResponseWriter, project string) {
-	var data []any
 	resp, status := services.GetReturnPriorityCountOfProjectClose(project)
 	if status != http.StatusOK {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
-	data = append(data, resp)
-	u.RespondVariable(w, http.StatusOK, data...)
+	u.RespondAny(w, resp, http.StatusOK)
 }
