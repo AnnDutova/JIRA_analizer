@@ -27,7 +27,6 @@ func GetReturnTimeCountOfIssuesInCloseState(project string) (map[string]interfac
 	} else {
 		resp["data"] = nil
 	}
-
 	return resp, http.StatusOK
 }
 
@@ -48,11 +47,11 @@ func GetReturnTimeSpentOnAllTasks(project string) (map[string]interface{}, int) 
 		}
 		data["count"] = category
 		data["categories"] = u.SortMinutesCategories(category)
+		resp["data"] = data
 	} else {
-		data["count"] = nil
-		data["categories"] = nil
+		resp["data"] = nil
 	}
-	resp["data"] = data
+
 	return resp, http.StatusOK
 }
 
@@ -99,11 +98,10 @@ func GetReturnPriorityCountOfProjectOpen(project string) (map[string]interface{}
 		}
 		data["count"] = names
 		data["categories"] = category
+		resp["data"] = data
 	} else {
-		data["count"] = nil
-		data["categories"] = nil
+		resp["data"] = nil
 	}
-	resp["data"] = data
 	return resp, http.StatusOK
 }
 
@@ -126,11 +124,10 @@ func GetReturnPriorityCountOfProjectClose(project string) (map[string]interface{
 		}
 		data["count"] = names
 		data["categories"] = category
+		resp["data"] = data
 	} else {
-		data["count"] = nil
-		data["categories"] = nil
+		resp["data"] = nil
 	}
-	resp["data"] = data
 	return resp, http.StatusOK
 }
 
@@ -208,8 +205,13 @@ func GetReturnTaskStateTime(project string) (map[string]interface{}, int) {
 		data["progress"] = nil
 		category["progress"] = nil
 	}
-	data["categories"] = category
-	resp["data"] = data
+
+	if len(openTasks) > 0 && len(reopenedTask) > 0 && len(resolveTask) > 0 && len(inProgressTask) > 0 {
+		data["categories"] = category
+		resp["data"] = data
+	} else {
+		resp["data"] = nil
+	}
 	return resp, http.StatusOK
 }
 
@@ -277,8 +279,12 @@ func GetReturnActivityByTask(project string) (map[string]interface{}, int) {
 	} else {
 		category["all"] = nil
 	}
-	data["categories"] = category
-	resp["data"] = data
+	if len(openTasks) > 0 && len(closeTasks) > 0 {
+		data["categories"] = category
+		resp["data"] = data
+	} else {
+		resp["data"] = nil
+	}
 	return resp, http.StatusOK
 }
 

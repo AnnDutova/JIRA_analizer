@@ -22,13 +22,24 @@ func NewAnalyticRepository(db_ *gorm.DB) *AnalyticRepository {
 
 func (r *AnalyticRepository) isDataExist(tableName string, projectId int) (bool, error) {
 	query := fmt.Sprintf("Select count(*) from \"%s\" where projectid = %d", tableName, projectId)
-	err := r.db.Raw(query).Row().Err()
+	res, err := r.db.Raw(query).Rows()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
 		}
 		return false, err
 	}
+
+	for res.Next() {
+		var count int
+		if err = res.Scan(&count); err != nil {
+			return false, err
+		}
+		if count == 0 {
+			return false, nil
+		}
+	}
+
 	return true, nil
 }
 
