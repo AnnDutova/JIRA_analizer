@@ -398,3 +398,65 @@ func IsAnalyzedGraph(project string) (map[string]interface{}, int) {
 	resp["data"] = data
 	return resp, http.StatusOK
 }
+
+func DeleteGraphsByProject(project string) (map[string]interface{}, int) {
+	err := repository.DbCon.GetRepository().DeleteOpenTaskTime(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteOpenTaskTime", project), http.StatusBadRequest
+	}
+	err = repository.DbCon.GetRepository().DeleteTaskStateTimeOpen(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteTaskStateTimeOpen", project), http.StatusBadRequest
+	}
+	err = repository.DbCon.GetRepository().DeleteTaskStateTimeResolved(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteTaskStateTimeResolved", project), http.StatusBadRequest
+	}
+	err = repository.DbCon.GetRepository().DeleteTaskStateTimeReopened(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteTaskStateTimeReopened", project), http.StatusBadRequest
+	}
+	err = repository.DbCon.GetRepository().DeleteTaskStateTimeInProgress(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteTaskStateTimeInProgress", project), http.StatusBadRequest
+	}
+
+	err = repository.DbCon.GetRepository().DeleteActivityByTaskOpen(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteActivityByTaskOpen", project), http.StatusBadRequest
+	}
+
+	err = repository.DbCon.GetRepository().DeleteActivityByTaskClose(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteActivityByTaskClose", project), http.StatusBadRequest
+	}
+
+	err = repository.DbCon.GetRepository().DeleteComplexityTaskTime(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteComplexityTaskTime", project), http.StatusBadRequest
+	}
+
+	err = repository.DbCon.GetRepository().DeleteTaskPriorityCountOpen(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteTaskPriorityCountOpen", project), http.StatusBadRequest
+	}
+
+	err = repository.DbCon.GetRepository().DeleteTaskPriorityCountClose(project)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteTaskPriorityCountClose", project), http.StatusBadRequest
+	}
+
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend DeleteGraphsByProject", project)
+	return resp, http.StatusOK
+}
