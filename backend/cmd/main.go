@@ -29,6 +29,9 @@ func main() {
 	router.HandleFunc("/api/v1/graph/make/{group:[0-9]}",
 		controllers.MakeGraphByGroup).Methods("POST")
 
+	router.HandleFunc("/api/v1/graph/delete",
+		controllers.DeleteGraphByProject).Methods("DELETE")
+
 	router.HandleFunc("/api/v1/isAnalyzed",
 		controllers.IsAnalyzed).Methods("GET")
 
