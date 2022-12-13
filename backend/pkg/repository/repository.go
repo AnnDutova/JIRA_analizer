@@ -54,6 +54,22 @@ type IAnalytic interface {
 	MakeCountTimeOfResolvedStateInCloseTask(projectName string) error
 	MakeCountTimeOfReopenedStateInCloseTask(projectName string) error
 	MakeCountTimeOfInProgressStateInCloseTask(projectName string) error
+
+	//delete
+	DeleteOpenTaskTime(projectName string) error
+
+	DeleteTaskStateTimeOpen(projectName string) error
+	DeleteTaskStateTimeResolved(projectName string) error
+	DeleteTaskStateTimeReopened(projectName string) error
+	DeleteTaskStateTimeInProgress(projectName string) error
+
+	DeleteActivityByTaskOpen(projectName string) error
+	DeleteActivityByTaskClose(projectName string) error
+
+	DeleteComplexityTaskTime(projectName string) error
+
+	DeleteTaskPriorityCountOpen(projectName string) error
+	DeleteTaskPriorityCountClose(projectName string) error
 }
 
 type ICompareGraphs interface {

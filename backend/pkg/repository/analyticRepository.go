@@ -1160,3 +1160,113 @@ func (r *AnalyticRepository) returnCountTimeOfInProgressStateInCloseTask(project
 
 	return r.convertTimeWithHours(graph), nil
 }
+
+func (r *AnalyticRepository) DeleteOpenTaskTime(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"openTaskTime\" where projectid=?", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteTaskStateTimeOpen(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"taskStateTime\" where projectid=? and state='Open'", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteTaskStateTimeResolved(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"taskStateTime\" where projectid=? and state='Resolved'", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteTaskStateTimeReopened(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"taskStateTime\" where projectid=? and state='Reopened'", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteTaskStateTimeInProgress(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"taskStateTime\" where projectid=? and state='In progress'", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteActivityByTaskOpen(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"activityByTask\" where projectid=? and state='Open'", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteActivityByTaskClose(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"activityByTask\" where projectid=? and state='Closed'", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteComplexityTaskTime(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"complexityTaskTime\" where projectid=?", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteTaskPriorityCountOpen(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"taskPriorityCount\" where projectid=? and state='Open'", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AnalyticRepository) DeleteTaskPriorityCountClose(projectName string) error {
+	id, err := r.returnProjectId(projectName)
+	if err != nil {
+		return err
+	}
+	if err = r.db.Raw("Delete from \"taskPriorityCount\" where projectid=? and state='Closed'", id).Row().Err(); err != nil {
+		return err
+	}
+	return nil
+}
