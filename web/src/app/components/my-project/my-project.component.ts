@@ -5,6 +5,7 @@ import {CheckedSetting} from "../../models/check-setting.model";
 import {SettingBox} from "../../models/setting.model";
 import {Router} from "@angular/router";
 import {DatabaseProjectServices} from "../../services/database-project.services";
+import {delay} from "rxjs";
 
 @Component({
   selector: 'app-my-project',
@@ -15,7 +16,9 @@ export class MyProjectComponent implements OnInit{
   @Output() onChecked: EventEmitter<any> = new EventEmitter<{}>();
   @Input() myProject: IProj
   stat: ProjectStat = new ProjectStat()
-  processing: boolean
+  checked = 0
+  complited = 0
+  processed: boolean
   settings: boolean
   checkboxes: SettingBox[] = []
   setting: Map<any, any> = new Map();
@@ -24,7 +27,7 @@ export class MyProjectComponent implements OnInit{
   }
 
   ngOnInit(): void{
-    this.processing=false;
+    this.processed=false;
     this.settings = false;
     this.checkboxes.push(new SettingBox("Гистограмма, отражающая время, которое задачи провели в открытом состоянии", false, 1 ))
     this.checkboxes.push(new SettingBox("Диаграммы, которые показывают распределение времени по состоянием задач", false, 2 ))
@@ -44,11 +47,33 @@ export class MyProjectComponent implements OnInit{
       console.log(projects.data)
       console.log(this.stat)
     })
+
+    this.dbProjectService.isAnalyzed(this.myProject.Name.toString()).subscribe(info => {
+      if (info.data["isAnalyzed"]){
+        this.processed = true
+      }
+    })
   }
 
-  processProject() {
-    this.processing = !this.processing
-    console.log(this.myProject, this.setting)
+  async processProject() {
+    this.complited = 0;
+    this.checked = 0;
+    this.checkboxes.forEach((box: SettingBox) =>{
+      if (box.Checked){
+        this.checked++
+      }
+    })
+    for (const box of this.checkboxes) {
+      if (box.Checked){
+        this.dbProjectService.makeGraph(box.BoxId.toString(), this.myProject.Name.toString()).subscribe(info => {
+          this.complited++;
+        })
+      }
+    }
+    this.processed = true
+  }
+
+  checkResult(){
     let ids:  number[] = []
     let items = this.myProject.Name
 
@@ -64,15 +89,18 @@ export class MyProjectComponent implements OnInit{
         value: ids
       }
     });
-
   }
 
   clickOnSettings(){
     this.settings = !this.settings;
   }
 
-  noneSelected(){
-    return !this.checkboxes.some(checkbox => checkbox.Checked);
+  disableCheckResultButton(){
+    return !this.processed || this.checked != this.complited;
+  }
+
+  disableAnalyzeButton(){
+    return !this.checkboxes.some(checkbox => checkbox.Checked)  || this.checked != this.complited;
   }
 
   childOnChecked(setting: CheckedSetting){

@@ -25,7 +25,17 @@ export class DatabaseProjectServices {
   }
 
   getGraph(taskNumber: string, projectName: string): Observable<IRequestObject> {
-    let projectsString = 'http://localhost:8000/api/v1/graph/'+taskNumber+'?project='+projectName
+    let projectsString = 'http://localhost:8000/api/v1/graph/get/'+taskNumber+'?project='+projectName
+    return this.http.get<IRequestObject>(projectsString)
+  }
+
+  makeGraph(taskNumber: string, projectName: string): Observable<IRequestObject> {
+    let projectsString = 'http://localhost:8000/api/v1/graph/make/'+taskNumber+'?project='+projectName
+    return this.http.post<IRequestObject>(projectsString, ' ')
+  }
+
+  isAnalyzed(projectName: string): Observable<IRequestObject>{
+    let projectsString = 'http://localhost:8000/api/v1/isAnalyzed?project='+projectName
     return this.http.get<IRequestObject>(projectsString)
   }
 }

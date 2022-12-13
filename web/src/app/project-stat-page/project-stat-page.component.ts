@@ -46,18 +46,16 @@ export class ProjectStatPageComponent implements OnInit {
     console.log(this.projects, this.ids)
 
     var openTaskElem = document.getElementById('open-task') as HTMLElement;
-    if (!this.ids.includes("1", 0)) {
-      openTaskElem.remove()
-    } else {
-      this.dbProjectService.getGraph("1", this.projects[0]).subscribe(info => {
+    this.dbProjectService.getGraph("1", this.projects[0]).subscribe(info => {
+      if (info.data == null) {
+        openTaskElem.remove()
+      } else {
         // @ts-ignore
-        var inf = info[0]
-        // @ts-ignore
-        openTaskChartOptions.xAxis["categories"] = inf.data["categories"]
+        openTaskChartOptions.xAxis["categories"] = info.data["categories"]
         var count = []
-        for (let i = 0; i < inf.data["categories"].length; i++) {
+        for (let i = 0; i < info.data["categories"].length; i++) {
           // @ts-ignore
-          count.push(inf.data["count"][inf.data["categories"][i]])
+          count.push(info.data["count"][info.data["categories"][i]])
         }
         openTaskChartOptions.series?.push({
           name: this.projects[0],
@@ -65,23 +63,22 @@ export class ProjectStatPageComponent implements OnInit {
           data: count
         })
         this.openTaskChart = new Chart(openTaskChartOptions)
-      })
-    }
+      }
+    })
 
 
     var openStateElem = document.getElementById('open-state') as HTMLElement;
     var resolveStateElem = document.getElementById('resolve-state') as HTMLElement;
     var progressStateElem = document.getElementById('progress-state') as HTMLElement;
     var reopenStateElem = document.getElementById('reopen-state') as HTMLElement;
-
-    if (!this.ids.includes("2", 0)) {
-      openStateElem.remove()
-      resolveStateElem.remove()
-      progressStateElem.remove()
-      reopenStateElem.remove()
-    }
-    else{
-      this.dbProjectService.getGraph("2", this.projects[0]).subscribe(info => {
+    this.dbProjectService.getGraph("2", this.projects[0]).subscribe(info => {
+      if (info.data == null) {
+        openStateElem.remove()
+        resolveStateElem.remove()
+        progressStateElem.remove()
+        reopenStateElem.remove()
+      }
+      else {
         if (info.data["open"] == null) {
           //вывести, что в каком-то из проектов отсутствуют открытые задачи
           openStateElem.remove()
@@ -157,131 +154,127 @@ export class ProjectStatPageComponent implements OnInit {
           })
           this.reopenStateChart = new Chart(reopenStateChartOptions)
         }
-      })
-    }
+      }
+    })
 
 
     var activityByTaskElem = document.getElementById('activity-by-task') as HTMLElement;
-    if (!this.ids.includes("3", 0)) {
-      activityByTaskElem.remove()
-    }
-    else{
-      this.dbProjectService.getGraph("3", this.projects[0]).subscribe(info => {
+    this.dbProjectService.getGraph("3", this.projects[0]).subscribe(info => {
+      if (info.data == null) {
+        activityByTaskElem.remove()
+      }
+      else {
         if (info.data["close"] == null) {
           activityByTaskElem.remove()
-        }
-        else{
+        } else {
           // @ts-ignore
           activityByTaskChartOptions.xAxis["categories"] = info.data["categories"]["all"]
           var countOpen = []
-          for (let i = 0; i < info.data["categories"]["open"].length; i++){
+          for (let i = 0; i < info.data["categories"]["open"].length; i++) {
             // @ts-ignore
             countOpen.push(info.data["open"][info.data["categories"]["open"][i]])
           }
           console.log(countOpen)
           var countClose = []
-          for (let i = 0; i < info.data["categories"]["close"].length; i++){
+          for (let i = 0; i < info.data["categories"]["close"].length; i++) {
             // @ts-ignore
             countClose.push(info.data["close"][info.data["categories"]["close"][i]])
           }
-          activityByTaskChartOptions.series?.push({ name: this.projects[0] + " open",
+          activityByTaskChartOptions.series?.push({
+            name: this.projects[0] + " open",
             type: "areaspline",
-            data: countOpen})
-          activityByTaskChartOptions.series?.push({ name: this.projects[0] + " close",
+            data: countOpen
+          })
+          activityByTaskChartOptions.series?.push({
+            name: this.projects[0] + " close",
             type: "areaspline",
-            data: countClose})
+            data: countClose
+          })
           this.activityByTaskChart = new Chart(activityByTaskChartOptions)
         }
-      })
-    }
+      }
+    })
 
 
     var complexityTaskElem = document.getElementById('complexity-task') as HTMLElement;
-    if (!this.ids.includes("4", 0)) {
-      complexityTaskElem.remove()
-    }
-    else {
-      this.dbProjectService.getGraph("4", this.projects[0]).subscribe(inf => {
-        // @ts-ignore
-        var info = inf[0]
-        if (info.data["categories"] == null) {
+      this.dbProjectService.getGraph("4", this.projects[0]).subscribe(info => {
+        if (info.data == null) {
           complexityTaskElem.remove()
-        } else {
-          // @ts-ignore
-          complexityTaskChartOptions.xAxis["categories"] = info.data["categories"]
-          var count = []
-          for (let i = 0; i < info.data["categories"].length; i++) {
+        }
+        else {
+          if (info.data["categories"] == null) {
+            complexityTaskElem.remove()
+          } else {
             // @ts-ignore
-            count.push(info.data["count"][info.data["categories"][i]])
+            complexityTaskChartOptions.xAxis["categories"] = info.data["categories"]
+            var count = []
+            for (let i = 0; i < info.data["categories"].length; i++) {
+              // @ts-ignore
+              count.push(info.data["count"][info.data["categories"][i]])
+            }
+            complexityTaskChartOptions.series?.push({
+              name: this.projects[0],
+              type: "column",
+              data: count
+            })
+            this.complexityTaskChart = new Chart(complexityTaskChartOptions)
           }
-          complexityTaskChartOptions.series?.push({
-            name: this.projects[0],
-            type: "column",
-            data: count
-          })
-          this.complexityTaskChart = new Chart(complexityTaskChartOptions)
         }
       })
-    }
 
 
     var taskPriorityElem = document.getElementById('task-priority') as HTMLElement;
-    if (!this.ids.includes("5", 0)) {
-      taskPriorityElem.remove()
-    }
-    else {
-      this.dbProjectService.getGraph("5", this.projects[0]).subscribe(inf => {
-        // @ts-ignore
-        var info = inf[0]
-        if (info.data["categories"] == null) {
+      this.dbProjectService.getGraph("5", this.projects[0]).subscribe(info => {
+        if (info.data == null) {
           taskPriorityElem.remove()
-        } else {
-          // @ts-ignore
-          taskPriorityChartOptions.xAxis["categories"] = info.data["categories"]
-          var count = []
-          for (let i = 0; i < info.data["categories"].length; i++) {
+        }
+        else {
+          if (info.data["categories"] == null) {
+            taskPriorityElem.remove()
+          } else {
             // @ts-ignore
-            count.push(info.data["count"][info.data["categories"][i]])
+            taskPriorityChartOptions.xAxis["categories"] = info.data["categories"]
+            var count = []
+            for (let i = 0; i < info.data["categories"].length; i++) {
+              // @ts-ignore
+              count.push(info.data["count"][info.data["categories"][i]])
+            }
+            taskPriorityChartOptions.series?.push({
+              name: this.projects[0],
+              type: "column",
+              data: count
+            })
+            this.taskPriorityChart = new Chart(taskPriorityChartOptions)
           }
-          taskPriorityChartOptions.series?.push({
-            name: this.projects[0],
-            type: "column",
-            data: count
-          })
-          this.taskPriorityChart = new Chart(taskPriorityChartOptions)
         }
       })
-    }
 
 
     var closeTaskPriorityElem = document.getElementById('close-task-priority') as HTMLElement;
-    if (!this.ids.includes("6", 0)) {
-      closeTaskPriorityElem.remove()
-    }
-    else {
-      this.dbProjectService.getGraph("6", this.projects[0]).subscribe(inf => {
-        // @ts-ignore
-        var info = inf[0]
-        if (info.data["categories"] == null) {
+      this.dbProjectService.getGraph("6", this.projects[0]).subscribe(info => {
+        if (info.data == null) {
           closeTaskPriorityElem.remove()
-        } else {
-          // @ts-ignore
-          closeTaskPriorityChartOptions.xAxis["categories"] = info.data["categories"]
-          var count = []
-          for (let i = 0; i < info.data["categories"].length; i++) {
+        }
+        else {
+          if (info.data["categories"] == null) {
+            closeTaskPriorityElem.remove()
+          } else {
             // @ts-ignore
-            count.push(info.data["count"][info.data["categories"][i]])
+            closeTaskPriorityChartOptions.xAxis["categories"] = info.data["categories"]
+            var count = []
+            for (let i = 0; i < info.data["categories"].length; i++) {
+              // @ts-ignore
+              count.push(info.data["count"][info.data["categories"][i]])
+            }
+            closeTaskPriorityChartOptions.series?.push({
+              name: this.projects[0],
+              type: "column",
+              data: count
+            })
+            this.closeTaskPriorityChart = new Chart(closeTaskPriorityChartOptions)
           }
-          closeTaskPriorityChartOptions.series?.push({
-            name: this.projects[0],
-            type: "column",
-            data: count
-          })
-          this.closeTaskPriorityChart = new Chart(closeTaskPriorityChartOptions)
         }
       })
-    }
-
   }
 
   ngOnDestroy(): void{
