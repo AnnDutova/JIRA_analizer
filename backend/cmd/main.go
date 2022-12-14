@@ -32,6 +32,9 @@ func main() {
 	router.HandleFunc("/api/v1/graph/delete",
 		controllers.DeleteGraphByProject).Methods("DELETE")
 
+	router.HandleFunc("/api/v1/graph/delete",
+		controllers.OptionsReq).Methods("OPTIONS")
+
 	router.HandleFunc("/api/v1/isAnalyzed",
 		controllers.IsAnalyzed).Methods("GET")
 

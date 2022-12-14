@@ -23,4 +23,24 @@ export class DatabaseProjectServices {
     let projectsString = 'http://localhost:8000/api/v1/compare/'+taskNumber+'?project='+projectName.toString()
     return this.http.get<IRequestObject>(projectsString)
   }
+
+  getGraph(taskNumber: string, projectName: string): Observable<IRequestObject> {
+    let projectsString = 'http://localhost:8000/api/v1/graph/get/'+taskNumber+'?project='+projectName
+    return this.http.get<IRequestObject>(projectsString)
+  }
+
+  makeGraph(taskNumber: string, projectName: string): Observable<IRequestObject> {
+    let projectsString = 'http://localhost:8000/api/v1/graph/make/'+taskNumber+'?project='+projectName
+    return this.http.post<IRequestObject>(projectsString, ' ')
+  }
+
+  deleteGraphs(projectName: string): Observable<IRequestObject> {
+    let projectsString = 'http://localhost:8000/api/v1/graph/delete'+'?project='+projectName
+    return this.http.delete<IRequestObject>(projectsString)
+  }
+
+  isAnalyzed(projectName: string): Observable<IRequestObject>{
+    let projectsString = 'http://localhost:8000/api/v1/isAnalyzed?project='+projectName
+    return this.http.get<IRequestObject>(projectsString)
+  }
 }

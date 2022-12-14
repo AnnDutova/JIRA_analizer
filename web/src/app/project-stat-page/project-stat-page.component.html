@@ -1,1 +1,16 @@
-<p>project-stat-page works!</p>
+<div class="body">
+  <h3>
+    Мои проекты
+  </h3>
+  <div class="container">
+    <div class="chart" id="open-task" [chart]="openTaskChart"></div>
+    <div class="chart" id="open-state" [chart]="openStateChart"></div>
+    <div class="chart" id="resolve-state" [chart]="resolveStateChart"></div>
+    <div class="chart" id="progress-state" [chart]="progressStateChart"></div>
+    <div class="chart" id="reopen-state" [chart]="reopenStateChart"></div>
+    <div class="chart" id="activity-by-task" [chart]="activityByTaskChart"></div>
+    <div class="chart" id="complexity-task" [chart]="complexityTaskChart"></div>
+    <div class="chart" id="task-priority" [chart]="taskPriorityChart"></div>
+    <div class="chart" id="close-task-priority" [chart]="closeTaskPriorityChart"></div>
+  </div>
+</div>
