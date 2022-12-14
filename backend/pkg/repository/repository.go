@@ -18,6 +18,7 @@ type IConnector interface {
 type IProject interface {
 	ReturnAllProjects(limit int64, page uint64, search string) ([]*models.Project, uint64, error)
 	ReturnProjectAnalytic(string) (*models.ProjectAnalytic, error)
+	DeleteProjectById(id string) (*models.Project, error)
 }
 
 type IHistories interface {

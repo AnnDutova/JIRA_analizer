@@ -138,3 +138,19 @@ func (r *ProjectRepository) ReturnProjectAnalytic(id string) (*models.ProjectAna
 
 	return ProjectAnalytic, err
 }
+
+func (r *ProjectRepository) DeleteProjectById(id string) (*models.Project, error) {
+	project := &models.Project{}
+
+	err := r.db.Raw("DELETE FROM issues WHERE projectId = ?", id).Scan(project).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Raw("DELETE FROM project WHERE id = ? RETURNING *", id).Scan(project).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return project, nil
+}

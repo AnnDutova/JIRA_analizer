@@ -26,3 +26,12 @@ var GetProjectAnalytic = func(w http.ResponseWriter, r *http.Request) {
 
 	u.RespondAny(w, resp, status)
 }
+
+var DeleteProjectById = func(w http.ResponseWriter, r *http.Request) {
+	re, _ := regexp.Compile("projects/(.*)")
+	id := re.FindString(r.URL.Path)
+
+	resp, status := services.DeleteProjectById(strings.Split(id, "/")[1], r.URL.Path)
+
+	u.RespondAny(w, resp, status)
+}
