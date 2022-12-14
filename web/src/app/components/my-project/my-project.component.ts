@@ -56,21 +56,23 @@ export class MyProjectComponent implements OnInit{
   }
 
   async processProject() {
-    this.complited = 0;
-    this.checked = 0;
-    this.checkboxes.forEach((box: SettingBox) =>{
-      if (box.Checked){
-        this.checked++
+    this.dbProjectService.deleteGraphs(this.myProject.Name.toString()).subscribe(info => {
+      this.complited = 0;
+      this.checked = 0;
+      this.checkboxes.forEach((box: SettingBox) =>{
+        if (box.Checked){
+          this.checked++
+        }
+      })
+      for (const box of this.checkboxes) {
+        if (box.Checked){
+          this.dbProjectService.makeGraph(box.BoxId.toString(), this.myProject.Name.toString()).subscribe(info => {
+            this.complited++;
+          })
+        }
       }
+      this.processed = true
     })
-    for (const box of this.checkboxes) {
-      if (box.Checked){
-        this.dbProjectService.makeGraph(box.BoxId.toString(), this.myProject.Name.toString()).subscribe(info => {
-          this.complited++;
-        })
-      }
-    }
-    this.processed = true
   }
 
   checkResult(){

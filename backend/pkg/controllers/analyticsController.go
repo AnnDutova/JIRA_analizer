@@ -177,3 +177,7 @@ var DeleteGraphByProject = func(w http.ResponseWriter, r *http.Request) {
 	}
 	u.RespondAny(w, resp, http.StatusOK)
 }
+
+var OptionsReq = func(w http.ResponseWriter, r *http.Request) {
+	u.RespondAny(w, nil, http.StatusOK)
+}

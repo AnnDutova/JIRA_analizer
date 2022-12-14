@@ -34,6 +34,11 @@ export class DatabaseProjectServices {
     return this.http.post<IRequestObject>(projectsString, ' ')
   }
 
+  deleteGraphs(projectName: string): Observable<IRequestObject> {
+    let projectsString = 'http://localhost:8000/api/v1/graph/delete'+'?project='+projectName
+    return this.http.delete<IRequestObject>(projectsString)
+  }
+
   isAnalyzed(projectName: string): Observable<IRequestObject>{
     let projectsString = 'http://localhost:8000/api/v1/isAnalyzed?project='+projectName
     return this.http.get<IRequestObject>(projectsString)
