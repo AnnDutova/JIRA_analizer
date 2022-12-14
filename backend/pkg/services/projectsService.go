@@ -61,3 +61,19 @@ func GetProjectAnalytic(id string, url string) (map[string]interface{}, int) {
 
 	return resp, http.StatusOK
 }
+
+func DeleteProjectById(id string, url string) (map[string]interface{}, int) {
+
+	project, err := repository.DbCon.GetRepository().DeleteProjectById(id)
+	if err != nil {
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend DeleteProject", url), http.StatusBadRequest
+	}
+
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend DeleteProject", url)
+
+	resp["data"] = project
+
+	return resp, http.StatusOK
+}
