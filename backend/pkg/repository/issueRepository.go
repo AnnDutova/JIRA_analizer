@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"gorm.io/gorm"
+	"database/sql"
 )
 
 type IssueRepository struct {
-	db *gorm.DB
+	db *sql.DB
 }
 
-func NewIssueRepository(db_ *gorm.DB) *IssueRepository {
+func NewIssueRepository(db_ *sql.DB) *IssueRepository {
 	return &IssueRepository{
 		db: db_,
 	}

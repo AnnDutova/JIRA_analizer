@@ -2,7 +2,7 @@ package repository
 
 import (
 	"Backend/pkg/models"
-	"gorm.io/gorm"
+	"database/sql"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/mock.go
@@ -16,7 +16,7 @@ type IConnector interface {
 }
 
 type IProject interface {
-	ReturnAllProjects(limit int64, page uint64, search string) ([]*models.Project, uint64, error)
+	ReturnAllProjects(limit int64, page uint64, search string) ([]models.Project, uint64, error)
 	ReturnProjectAnalytic(string) (*models.ProjectAnalytic, error)
 	DeleteProjectById(id string) (*models.Project, error)
 }
@@ -99,7 +99,7 @@ type Repository struct {
 	ICompareGraphs
 }
 
-func NewRepository(db *gorm.DB) *Repository {
+func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
 		IIssue:         NewIssueRepository(db),
 		IProject:       NewProjectRepository(db),

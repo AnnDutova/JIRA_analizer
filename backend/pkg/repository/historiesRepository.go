@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"gorm.io/gorm"
+	"database/sql"
 )
 
 type HistoriesRepository struct {
-	db *gorm.DB
+	db *sql.DB
 }
 
-func NewHistoriesRepository(db_ *gorm.DB) *HistoriesRepository {
+func NewHistoriesRepository(db_ *sql.DB) *HistoriesRepository {
 	return &HistoriesRepository{
 		db: db_,
 	}

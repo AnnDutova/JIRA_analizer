@@ -4,14 +4,13 @@ import (
 	"Backend/pkg/models"
 	"database/sql"
 	"encoding/json"
-	"gorm.io/gorm"
 )
 
 type CompareGraphRepository struct {
-	db *gorm.DB
+	db *sql.DB
 }
 
-func NewCompareGraphRepository(db_ *gorm.DB) *CompareGraphRepository {
+func NewCompareGraphRepository(db_ *sql.DB) *CompareGraphRepository {
 	return &CompareGraphRepository{
 		db: db_,
 	}
@@ -20,8 +19,8 @@ func NewCompareGraphRepository(db_ *gorm.DB) *CompareGraphRepository {
 func (r *CompareGraphRepository) CheckExistenceOnOpenTaskTimeTable(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"openTaskTime\" "+
-		"left join project on projectId = project.id where project.title = ?", projectName).Row()
+	row := r.db.QueryRow("Select data from \"openTaskTime\" "+
+		"left join project on projectId = project.id where project.title = ?", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -46,8 +45,8 @@ func (r *CompareGraphRepository) CheckExistenceOnOpenTaskTimeTable(projectName s
 func (r *CompareGraphRepository) CheckExistenceOnTaskStateTimeTableOpen(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"taskStateTime\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Open'", projectName).Row()
+	row := r.db.QueryRow("Select data from \"taskStateTime\" "+
+		"left join project on projectId = project.id where project.title = ? and state = 'Open'", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -72,8 +71,8 @@ func (r *CompareGraphRepository) CheckExistenceOnTaskStateTimeTableOpen(projectN
 func (r *CompareGraphRepository) CheckExistenceOnTaskStateTimeTableResolved(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"taskStateTime\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Resolved'", projectName).Row()
+	row := r.db.QueryRow("Select data from \"taskStateTime\" "+
+		"left join project on projectId = project.id where project.title = ? and state = 'Resolved'", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -98,8 +97,8 @@ func (r *CompareGraphRepository) CheckExistenceOnTaskStateTimeTableResolved(proj
 func (r *CompareGraphRepository) CheckExistenceOnTaskStateTimeTableReopened(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"taskStateTime\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Reopened'", projectName).Row()
+	row := r.db.QueryRow("Select data from \"taskStateTime\" "+
+		"left join project on projectId = project.id where project.title = ? and state = 'Reopened'", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -124,8 +123,8 @@ func (r *CompareGraphRepository) CheckExistenceOnTaskStateTimeTableReopened(proj
 func (r *CompareGraphRepository) CheckExistenceOnTaskStateTimeTableInProgress(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"taskStateTime\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'In progress'", projectName).Row()
+	row := r.db.QueryRow("Select data from \"taskStateTime\" "+
+		"left join project on projectId = project.id where project.title = ? and state = 'In progress'", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -150,8 +149,8 @@ func (r *CompareGraphRepository) CheckExistenceOnTaskStateTimeTableInProgress(pr
 func (r *CompareGraphRepository) CheckExistenceOnActivityByTaskTableClose(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"activityByTask\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Closed'", projectName).Row()
+	row := r.db.QueryRow("Select data from \"activityByTask\" "+
+		"left join project on projectId = project.id where project.title = ? and state = 'Closed'", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -176,8 +175,8 @@ func (r *CompareGraphRepository) CheckExistenceOnActivityByTaskTableClose(projec
 func (r *CompareGraphRepository) CheckExistenceOnActivityByTaskTableOpen(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"activityByTask\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Open'", projectName).Row()
+	row := r.db.QueryRow("Select data from \"activityByTask\" "+
+		"left join project on projectId = project.id where project.title = ? and state = 'Open'", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -202,8 +201,8 @@ func (r *CompareGraphRepository) CheckExistenceOnActivityByTaskTableOpen(project
 func (r *CompareGraphRepository) CheckExistenceOnComplexityTaskTimeTable(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"complexityTaskTime\" "+
-		"left join project on projectId = project.id where project.title = ?", projectName).Row()
+	row := r.db.QueryRow("Select data from \"complexityTaskTime\" "+
+		"left join project on projectId = project.id where project.title = ?", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -228,8 +227,8 @@ func (r *CompareGraphRepository) CheckExistenceOnComplexityTaskTimeTable(project
 func (r *CompareGraphRepository) CheckExistenceOnTaskPriorityCountTableOpen(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"taskPriorityCount\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Open'", projectName).Row()
+	row := r.db.QueryRow("Select data from \"taskPriorityCount\" "+
+		"left join project on projectId = project.id where project.title = ? and state = 'Open'", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil
@@ -254,8 +253,8 @@ func (r *CompareGraphRepository) CheckExistenceOnTaskPriorityCountTableOpen(proj
 func (r *CompareGraphRepository) CheckExistenceOnTaskPriorityCountTableClose(projectName string) ([]models.GraphOutput, error) {
 	var data []models.GraphOutput
 	var request []byte
-	row := r.db.Raw("Select data from \"taskPriorityCount\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Closed'", projectName).Row()
+	row := r.db.QueryRow("Select data from \"taskPriorityCount\" "+
+		"left join project on projectId = project.id where project.title = ? and state = 'Closed'", projectName)
 	if row.Err() != nil {
 		if row.Err() == sql.ErrNoRows {
 			return nil, nil

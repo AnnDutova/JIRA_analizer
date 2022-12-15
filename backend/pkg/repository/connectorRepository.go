@@ -2,17 +2,17 @@ package repository
 
 import (
 	"Backend/pkg/models"
+	"database/sql"
 	"encoding/json"
-	"gorm.io/gorm"
 	"io"
 	"net/http"
 )
 
 type ConnectorRepository struct {
-	db *gorm.DB
+	db *sql.DB
 }
 
-func NewConnectorRepository(db_ *gorm.DB) *ConnectorRepository {
+func NewConnectorRepository(db_ *sql.DB) *ConnectorRepository {
 	return &ConnectorRepository{
 		db: db_,
 	}
@@ -56,8 +56,8 @@ func (r *ConnectorRepository) ReturnAllProjectsFromConnector(limit, page, search
 	err = json.Unmarshal(body, &projects)
 
 	for _, project := range projects.Projects {
-		err = r.db.Raw("select exists(select "+
-			"from project where id =?)", project.Id).Scan(&project.Existence).Error
+		err = r.db.QueryRow("select exists(select "+
+			"from project where id =?)", project.Id).Scan(&project.Existence)
 	}
 
 	return projects, nil
