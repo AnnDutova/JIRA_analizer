@@ -142,7 +142,32 @@ func (r *ProjectRepository) ReturnProjectAnalytic(id string) (*models.ProjectAna
 func (r *ProjectRepository) DeleteProjectById(id string) (*models.Project, error) {
 	project := &models.Project{}
 
-	err := r.db.Raw("DELETE FROM issues WHERE projectId = ?", id).Scan(project).Error
+	err := r.db.Raw("DELETE FROM \"taskPriorityCount\" WHERE projectId = ?", id).Scan(project).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Raw("DELETE FROM \"activityByTask\" WHERE projectId = ?", id).Scan(project).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Raw("DELETE FROM \"taskStateTime\" WHERE projectId = ?", id).Scan(project).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Raw("DELETE FROM \"complexityTaskTime\" WHERE projectId = ?", id).Scan(project).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Raw("DELETE FROM \"openTaskTime\" WHERE projectId = ?", id).Scan(project).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Raw("DELETE FROM issues WHERE projectId = ?", id).Scan(project).Error
 	if err != nil {
 		return nil, err
 	}
