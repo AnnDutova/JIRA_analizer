@@ -1,6 +1,15 @@
 <div class="body">
-  <h3>
-    Cравнение
+  <h3 *ngIf="projects.length == 2">
+    <a href="http://localhost:4200/compare">
+      Сравнение
+    </a>
+    > {{ projects[0].toString() + " vs " + projects[1].toString()}}
+  </h3>
+  <h3 *ngIf="projects.length == 3">
+    <a href="http://localhost:4200/compare">
+      Сравнение
+    </a>
+    > {{ projects[0].toString() + " vs " + projects[1].toString() + " vs " + projects[2].toString()}}
   </h3>
   <div class="container">
     <table class = "tbl" id="table1">

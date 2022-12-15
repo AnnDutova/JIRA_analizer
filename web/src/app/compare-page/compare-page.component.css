@@ -3,6 +3,27 @@
   margin: auto;
 }
 
-.btn{
-  margin-top: 20px;
+button {
+  margin-bottom: 100px;
+  border: none;
+  border-radius: 2px;
+  display: block;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 2rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+  background-color: #e5c04d;
+}
+
+.btn {
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+  letter-spacing: .5px;
+  -webkit-transition: .2s ease-out;
+  transition: .2s ease-out;
+  cursor: pointer;
+  position: absolute;
 }
