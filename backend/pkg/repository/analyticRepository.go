@@ -23,6 +23,7 @@ func NewAnalyticRepository(db_ *gorm.DB) *AnalyticRepository {
 func (r *AnalyticRepository) isDataExist(tableName string, projectId int) (bool, error) {
 	query := fmt.Sprintf("Select count(*) from \"%s\" where projectid = %d", tableName, projectId)
 	res, err := r.db.Raw(query).Rows()
+	defer res.Close()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
@@ -96,11 +97,8 @@ func (r *AnalyticRepository) ReturnTimeCountOfIssuesInCloseState(projectName str
 
 func (r *AnalyticRepository) returnProjectId(projectName string) (int, error) {
 	var id int
-	row := r.db.Raw("Select project.id from project where project.title = ?", projectName).Row()
-	if row.Err() != nil {
-		return 0, row.Err()
-	}
-	if err := row.Scan(&id); err != nil {
+	err := r.db.Raw("Select project.id from project where project.title = ?", projectName).Scan(&id).Error
+	if err != nil {
 		return 0, err
 	}
 	return id, nil
@@ -503,7 +501,7 @@ func (r *AnalyticRepository) returnOpenTimeInClose(projectName string) ([]models
 	rows, err := r.db.Raw("Select i.id, i.createdtime from issues as i"+
 		" left join project on i.projectId = project.id "+
 		" where project.title = ? and i.status = 'Closed'", projectName).Rows()
-
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -600,7 +598,7 @@ func (r *AnalyticRepository) returnTimeSpentOnAllTasks(projectName string) ([]mo
 		" left join project on i.projectId = project.id "+
 		" where i.timespent > 0 and project.title = ? "+
 		" group by i.timespent order by i.timespent ", projectName).Rows()
-
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -643,7 +641,7 @@ func (r *AnalyticRepository) returnPriorityGraphOpen(projectName string) ([]mode
 	rows, err := r.db.Raw("Select i.priority, "+" count(i.priority) as count from issues as i "+
 		" left join project on i.projectId = project.id where project.title = ? and i.status = 'Open' "+
 		" group by priority order by count desc", projectName).Rows()
-
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -684,7 +682,7 @@ func (r *AnalyticRepository) returnPriorityGraphClose(projectName string) ([]mod
 	rows, err := r.db.Raw("Select i.priority, "+" count(i.priority) as count from issues as i "+
 		" left join project on i.projectId = project.id where project.title = ? and i.status = 'Closed' "+
 		" group by priority order by count desc", projectName).Rows()
-
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -730,6 +728,7 @@ func (r *AnalyticRepository) returnCountOpenTaskInDay(projectName string) ([]mod
 		" where project.title = ? and i.status in ('Open', 'Reopen'))"+
 		" Select count(p.createdTime) as count, p.createdTime"+" from pre_req as p "+
 		" group by p.createdTime order by p.createdTime", projectName).Rows()
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -790,6 +789,7 @@ func (r *AnalyticRepository) returnCountCloseTaskInDay(projectName string) ([]mo
 		" where project.title = ? and i.status = 'Closed')"+
 		" Select count(p.createdTime) as count, p.createdTime"+" from pre_req as p "+
 		" group by p.createdTime order by p.createdTime", projectName).Rows()
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -851,7 +851,7 @@ func (r *AnalyticRepository) returnCountTimeOfOpenStateInCloseTask(projectName s
 		" and sc.fromStatus = 'Open')"+
 		" Select difference, "+"count(difference) as count from pre_cast "+
 		" group by difference order by difference;", projectName).Rows()
-
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -898,6 +898,7 @@ func (r *AnalyticRepository) returnCountTimeOfResolvedStateInCloseTask(projectNa
 		"left join \"statusChange\" as sc on sc.issueId = i.id "+
 		"where project.title = ? and i.status = 'Closed' and "+
 		"(sc.fromstatus = 'Resolved' or sc.tostatus='Resolved')", projectName).Rows()
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -994,6 +995,7 @@ func (r *AnalyticRepository) returnCountTimeOfReopenedStateInCloseTask(projectNa
 		"where project.title = ? and i.status = 'Closed' and "+
 		"(sc.fromstatus = 'Reopened' or sc.tostatus='Reopened') "+
 		"order by i.id, sc.changetime", projectName).Rows()
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -1092,6 +1094,7 @@ func (r *AnalyticRepository) returnCountTimeOfInProgressStateInCloseTask(project
 		"left join \"statusChange\" as sc on sc.issueId = i.id "+
 		"where project.title = ? and i.status = 'Closed' and "+
 		"(sc.fromstatus = 'In Progress' or sc.tostatus='In Progress')", projectName).Rows()
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -1166,7 +1169,7 @@ func (r *AnalyticRepository) DeleteOpenTaskTime(projectName string) error {
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"openTaskTime\" where projectid=?", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"openTaskTime\" where projectid=?", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1177,7 +1180,7 @@ func (r *AnalyticRepository) DeleteTaskStateTimeOpen(projectName string) error {
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"taskStateTime\" where projectid=? and state='Open'", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"taskStateTime\" where projectid=? and state='Open'", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1188,7 +1191,7 @@ func (r *AnalyticRepository) DeleteTaskStateTimeResolved(projectName string) err
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"taskStateTime\" where projectid=? and state='Resolved'", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"taskStateTime\" where projectid=? and state='Resolved'", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1199,7 +1202,7 @@ func (r *AnalyticRepository) DeleteTaskStateTimeReopened(projectName string) err
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"taskStateTime\" where projectid=? and state='Reopened'", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"taskStateTime\" where projectid=? and state='Reopened'", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1210,7 +1213,7 @@ func (r *AnalyticRepository) DeleteTaskStateTimeInProgress(projectName string) e
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"taskStateTime\" where projectid=? and state='In progress'", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"taskStateTime\" where projectid=? and state='In progress'", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1221,7 +1224,7 @@ func (r *AnalyticRepository) DeleteActivityByTaskOpen(projectName string) error 
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"activityByTask\" where projectid=? and state='Open'", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"activityByTask\" where projectid=? and state='Open'", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1232,7 +1235,7 @@ func (r *AnalyticRepository) DeleteActivityByTaskClose(projectName string) error
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"activityByTask\" where projectid=? and state='Closed'", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"activityByTask\" where projectid=? and state='Closed'", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1243,7 +1246,7 @@ func (r *AnalyticRepository) DeleteComplexityTaskTime(projectName string) error 
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"complexityTaskTime\" where projectid=?", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"complexityTaskTime\" where projectid=?", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1254,7 +1257,7 @@ func (r *AnalyticRepository) DeleteTaskPriorityCountOpen(projectName string) err
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"taskPriorityCount\" where projectid=? and state='Open'", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"taskPriorityCount\" where projectid=? and state='Open'", id).Error; err != nil {
 		return err
 	}
 	return nil
@@ -1265,7 +1268,7 @@ func (r *AnalyticRepository) DeleteTaskPriorityCountClose(projectName string) er
 	if err != nil {
 		return err
 	}
-	if err = r.db.Raw("Delete from \"taskPriorityCount\" where projectid=? and state='Closed'", id).Row().Err(); err != nil {
+	if err = r.db.Exec("Delete from \"taskPriorityCount\" where projectid=? and state='Closed'", id).Error; err != nil {
 		return err
 	}
 	return nil
