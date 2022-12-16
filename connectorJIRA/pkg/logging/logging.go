@@ -38,7 +38,7 @@ func GetLogger() *logrus.Logger {
 	return logger
 }
 
-func Init(projectPath string) {
+func Init() {
 	l := logrus.New()
 	l.SetReportCaller(true)
 	l.Formatter = &logrus.TextFormatter{
@@ -49,17 +49,17 @@ func Init(projectPath string) {
 		FullTimestamp: true,
 	}
 
-	err := os.MkdirAll(projectPath+"/connectorJIRA/logs", 0755)
+	err := os.MkdirAll("./logs", 0755)
 	if err != nil {
 		panic(err)
 	}
 
-	log_file, err := os.OpenFile(projectPath+"/connectorJIRA/logs/logs.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0640)
+	log_file, err := os.OpenFile("./logs/logs.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0640)
 	if err != nil {
 		panic(err)
 	}
 
-	err_log_file, err := os.OpenFile(projectPath+"/connectorJIRA/logs/err_logs.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0640)
+	err_log_file, err := os.OpenFile("./logs/err_logs.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0640)
 	if err != nil {
 		panic(err)
 	}

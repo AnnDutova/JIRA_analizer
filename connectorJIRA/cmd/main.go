@@ -3,11 +3,10 @@ package main
 import (
 	"connectorJIRA/pkg/apiserver"
 	"connectorJIRA/pkg/logging"
-	"os"
 )
 
 func main() {
-	logging.Init(os.Args[1])
+	logging.Init()
 	logger := logging.GetLogger()
 	logger.Info("Start connector")
 
