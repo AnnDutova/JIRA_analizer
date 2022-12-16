@@ -20,6 +20,15 @@ func New(db_ *sql.DB) *PSQLConnector {
 	}
 }
 
+func (c *PSQLConnector) AddProject(project string, projectId int) error {
+	command := fmt.Sprintf("insert into project (id, title) VALUES ('%d', '%s')", projectId, project)
+	_, err := c.db.Exec(command)
+	if err != nil {
+		return errors.New("Error when exec command \"" + command + "\": " + err.Error())
+	}
+	return nil
+}
+
 func (c *PSQLConnector) UpdateData(issues []datatransformer.Issue, statuses []datatransformer.IssueStatusChanges) error {
 	if err := c.pushIssues(issues); err != nil {
 		return errors.New("Error when pushIssues: " + err.Error())

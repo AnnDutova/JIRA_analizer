@@ -170,9 +170,17 @@ func (rout *Router) handleUpdateProject(rw http.ResponseWriter, r *http.Request)
 		return
 	}
 	if total == 0 {
-		errMsg := "This project is empty"
-		rout.logger.Warning(errMsg)
-		parseError(rw, r, http.StatusBadRequest, errors.New(errMsg))
+		projectId, projectName, err := rout.JIRAConnector.GetProjectInfo(project)
+		if err != nil {
+			rout.logger.Error("Error when get project info from JIRA: " + err.Error())
+			parseError(rw, r, http.StatusBadRequest, err)
+			return
+		}
+		if err := rout.dbConnector.AddProject(projectName, projectId); err != nil {
+			rout.logger.Error("Error when push data to DB: " + err.Error())
+			parseError(rw, r, http.StatusBadRequest, err)
+			return
+		}
 		return
 	}
 
