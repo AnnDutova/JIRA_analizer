@@ -26,7 +26,7 @@ type Config struct {
 	} `yaml:"ProgramSettings"`
 	Backend struct {
 		Port       uint   `yaml:"port"`
-		ReloadTime uint64 `yaml:"reloadTime"`
+		UpdateTime uint64 `yaml:"updateTime"`
 	} `yaml:"Backend"`
 }
 

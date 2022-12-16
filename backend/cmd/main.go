@@ -1,13 +1,12 @@
 package main
 
 import (
+	"Backend/pkg/app"
+	"Backend/pkg/controllers"
 	"Backend/pkg/repository"
 	"flag"
 	"fmt"
 	"net/http"
-	"os"
-
-	"Backend/pkg/controllers"
 
 	"github.com/gorilla/mux"
 )
@@ -17,12 +16,13 @@ var (
 )
 
 func init() {
-	fmt.Print("From main", configPath)
 	flag.StringVar(&configPath, "config-path", "../config/config.yaml", "path to config file")
 }
 
 func main() {
-	repository.DbCon = repository.NewDBController(configPath)
+	config := app.NewConfig(configPath)
+	repository.DbCon = repository.NewDBController(config)
+
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/v1/projects",
@@ -61,13 +61,8 @@ func main() {
 	router.HandleFunc("/api/v1/compare/{group:[0-9]}",
 		controllers.GetCompareByGraphGroup).Methods("GET")
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8000"
-	}
-
+	port := fmt.Sprintf("%d", config.Backend.Port)
 	fmt.Println(port)
-
 	err := http.ListenAndServe(":"+port, router)
 
 	if err != nil {

@@ -13,8 +13,7 @@ type DBController struct {
 	repo *Repository
 }
 
-func NewDBController(path string) *DBController {
-	config := app.NewConfig(path)
+func NewDBController(config *app.Config) *DBController {
 	db, err := setDBConnection(config)
 	if err != nil {
 		log.Fatal(err)
