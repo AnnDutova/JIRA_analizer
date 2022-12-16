@@ -24,12 +24,12 @@ type Config struct {
 		ThreadCount       uint   `yaml:"threadCount"`
 		MaxTimeSleep      uint   `yaml:"maxTimeSleep"`
 		MinTimeSleep      uint   `yaml:"minTimeSleep"`
-	} `yaml:"ProgramSettings"`
+	} `yaml:"ConnectorSettings"`
 }
 
 func GetConfig(path string) *Config {
 	logger := logging.GetLogger()
-	file, err := os.Open(path + "/connectorJIRA/config/config.yaml")
+	file, err := os.Open(path)
 	if err != nil {
 		logger.Fatal(errors.New("Error while open config file: " + err.Error()))
 	}
