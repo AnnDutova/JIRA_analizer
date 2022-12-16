@@ -40,34 +40,9 @@ export class CompareProjectPageComponent implements OnInit {
 
 
   ngOnInit(): void {
-    var header = document.getElementById('soft_stat_header') as HTMLElement;
-    var sumTask = document.getElementById('summary_task_count') as HTMLElement;
-    var taskCountOpen = document.getElementById('open_task_count') as HTMLElement;
-    var taskCountClose = document.getElementById('close_task_count') as HTMLElement;
-    var averageTaskTime = document.getElementById('average_task_time') as HTMLElement;
-    var averageTaskCount = document.getElementById('average_task_count') as HTMLElement;
-
     for (let i = 0; i < this.projects.length; i++) {
-      var col = document.createElement('th');
-      col.textContent = this.projects[i];
-      header.appendChild(col);
       this.dbProjectService.getProjectStatByID(this.ids[i]).subscribe(projects => {
-        this.resultReq.push(projects.data)
-        var row = document.createElement('td');
-        row.textContent = projects.data.allIssuesCount.toString();
-        sumTask.appendChild(row);
-        row = document.createElement('td');
-        row.textContent = projects.data.openIssuesCount.toString();
-        taskCountOpen.appendChild(row);
-        row = document.createElement('td');
-        row.textContent = projects.data.closeIssuesCount.toString();
-        taskCountClose.appendChild(row);
-        row = document.createElement('td');
-        row.textContent = projects.data.averageTime.toString();
-        averageTaskTime.appendChild(row);
-        row = document.createElement('td');
-        row.textContent = projects.data.averageIssuesCount.toString();
-        averageTaskCount.appendChild(row);
+        this.resultReq[i] = projects.data
       })
     }
 
