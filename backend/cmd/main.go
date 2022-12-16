@@ -1,14 +1,28 @@
 package main
 
 import (
-	"Backend/pkg/controllers"
+	"Backend/pkg/repository"
+	"flag"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"os"
+
+	"Backend/pkg/controllers"
+
+	"github.com/gorilla/mux"
 )
 
+var (
+	configPath string
+)
+
+func init() {
+	fmt.Print("From main", configPath)
+	flag.StringVar(&configPath, "config-path", "../config/config.yaml", "path to config file")
+}
+
 func main() {
+	repository.DbCon = repository.NewDBController(configPath)
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/v1/projects",
