@@ -5,10 +5,13 @@ DBSettings:
   dbUsername: "pguser"
   dbPassword: "pgpwd"
 
-ProgramSettings:
+ConnectorSettings:
   bindAddress: ":8050"
   jiraUrl: "https://issues.apache.org/jira"
   issueInOneRequest: 100 #max = 1000, min = 50
   threadCount: 4 #min = 1
   maxTimeSleep: 8000 #максимальное время ожидания перед повторной попыткой запроса (миллилсек)
   minTimeSleep: 50 #начальнгое время ожидания перед повторной попыткой запроса (миллисек)
+  
+Backend:
+  updateTime: 10 #in minutes
