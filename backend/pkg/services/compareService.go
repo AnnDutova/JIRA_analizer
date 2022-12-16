@@ -328,7 +328,7 @@ func GetSixthGraphOnCompare(projects []string) (map[string]interface{}, int) {
 	var resp map[string]interface{}
 	if len(emptyProject) == 0 {
 		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetFifthGraphOnCompare", fmt.Sprint(projects))
+			"Jira Analyzer Backend GetSixthGraphOnCompare", fmt.Sprint(projects))
 		data["projects"] = projects
 		keys := make([]string, 0, len(category))
 		for k := range category {
@@ -340,7 +340,7 @@ func GetSixthGraphOnCompare(projects []string) (map[string]interface{}, int) {
 	} else {
 		data["priority"] = nil
 		resp = u.Message(true, "accepted",
-			fmt.Sprintf("Jira Analyzer Backend GetFifthGraphOnCompare. Has empty data for %s", emptyProject), fmt.Sprint(projects))
+			fmt.Sprintf("Jira Analyzer Backend GetSixthGraphOnCompare. Has empty data for %s", emptyProject), fmt.Sprint(projects))
 		data["projects"] = projects
 		data["categories"] = nil
 		resp["data"] = data
