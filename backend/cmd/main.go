@@ -5,6 +5,7 @@ import (
 	"Backend/pkg/controllers"
 	"Backend/pkg/repository"
 	"flag"
+	"Backend/pkg/utils"
 	"fmt"
 	"net/http"
 
@@ -22,7 +23,9 @@ func init() {
 func main() {
 	config := app.NewConfig(configPath)
 	repository.DbCon = repository.NewDBController(config)
-
+	utils.Init()
+	logger := utils.GetLogger()
+	logger.Info("Start backend work")
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/v1/projects",
@@ -63,6 +66,7 @@ func main() {
 
 	port := fmt.Sprintf("%d", config.Backend.Port)
 	fmt.Println(port)
+	logger.Info("Backend work on port ", port)
 	err := http.ListenAndServe(":"+port, router)
 
 	if err != nil {
