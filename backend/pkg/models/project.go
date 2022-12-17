@@ -21,14 +21,15 @@ type Projects struct {
 }
 
 type ProjectAnalytic struct {
-	Id                 int     `json:"Id"`
-	Key                string  `json:"Key"`
-	Title              string  `json:"Name"`
-	AllIssuesCount     int     `json:"allIssuesCount"`
-	OpenIssuesCount    int     `json:"openIssuesCount"`
-	CloseIssuesCount   int     `json:"closeIssuesCount"`
-	AverageTime        float64 `json:"averageTime"`
-	AverageIssuesCount float64 `json:"averageIssuesCount"`
+	Id                  int     `json:"Id"`
+	Key                 string  `json:"Key"`
+	Title               string  `json:"Name"`
+	AllIssuesCount      int     `json:"allIssuesCount"`
+	OpenIssuesCount     int     `json:"openIssuesCount"`
+	CloseIssuesCount    int     `json:"closeIssuesCount"`
+	ResolvedIssuesCount int     `json:"resolvedIssuesCount"`
+	AverageTime         float64 `json:"averageTime"`
+	AverageIssuesCount  float64 `json:"averageIssuesCount"`
 }
 
 type PageCount struct {
