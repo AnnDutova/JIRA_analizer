@@ -25,6 +25,7 @@ type IHistories interface {
 }
 
 type IAnalytic interface {
+	IsEmpty(projectName string) (bool, error)
 	IsAnalyzed(projectName string) (bool, error)
 	//get
 	ReturnTimeCountOfIssuesInCloseState(projectName string) ([]models.GraphOutput, error)
