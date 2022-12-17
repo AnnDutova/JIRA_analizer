@@ -64,6 +64,21 @@ func (r *AnalyticRepository) IsAnalyzed(projectName string) (bool, error) {
 	return false, nil
 }
 
+func (r *AnalyticRepository) IsEmpty(projectName string) (bool, error) {
+	projectId, err := r.returnProjectId(projectName)
+	if err != nil {
+		return true, err
+	}
+	var count int
+	if err := r.db.Raw("Select count(*) from issues where projectid = ?", projectId).Scan(&count).Error; err != nil {
+		return true, err
+	}
+	if count > 0 {
+		return false, err
+	}
+	return true, nil
+}
+
 func (r *AnalyticRepository) ReturnTimeCountOfIssuesInCloseState(projectName string) ([]models.GraphOutput, error) {
 	var graph []models.GraphOutput
 	var request []byte

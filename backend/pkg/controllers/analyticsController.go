@@ -38,7 +38,7 @@ var GetGraphByGroup = func(w http.ResponseWriter, r *http.Request) {
 
 func getFirstGraphGroup(w http.ResponseWriter, project string) {
 	resp, status := services.GetReturnTimeCountOfIssuesInCloseState(project)
-	if status != http.StatusOK {
+	if status > 300 && status < 200 {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
 	u.RespondAny(w, resp, http.StatusOK)
@@ -46,7 +46,7 @@ func getFirstGraphGroup(w http.ResponseWriter, project string) {
 
 func getSecondGraphGroup(w http.ResponseWriter, project string) {
 	resp, status := services.GetReturnTaskStateTime(project)
-	if status != http.StatusOK {
+	if status > 300 && status < 200 {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
 	u.RespondAny(w, resp, http.StatusOK)
@@ -54,7 +54,7 @@ func getSecondGraphGroup(w http.ResponseWriter, project string) {
 
 func getThirdGraphGroup(w http.ResponseWriter, project string) {
 	data, status := services.GetReturnActivityByTask(project)
-	if status != http.StatusOK {
+	if status > 300 && status < 200 {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
 	u.RespondAny(w, data, http.StatusOK)
@@ -62,7 +62,7 @@ func getThirdGraphGroup(w http.ResponseWriter, project string) {
 
 func getForthGraphGroup(w http.ResponseWriter, project string) {
 	resp, status := services.GetReturnTimeSpentOnAllTasks(project)
-	if status != http.StatusOK {
+	if status > 300 && status < 200 {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
 	u.RespondAny(w, resp, http.StatusOK)
@@ -70,7 +70,7 @@ func getForthGraphGroup(w http.ResponseWriter, project string) {
 
 func getFifthGraphGroup(w http.ResponseWriter, project string) {
 	resp, status := services.GetReturnPriorityCountOfProjectOpen(project)
-	if status != http.StatusOK {
+	if status > 300 && status < 200 {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
 	u.RespondAny(w, resp, http.StatusOK)
@@ -78,7 +78,7 @@ func getFifthGraphGroup(w http.ResponseWriter, project string) {
 
 func getSixGraphGroup(w http.ResponseWriter, project string) {
 	resp, status := services.GetReturnPriorityCountOfProjectClose(project)
-	if status != http.StatusOK {
+	if status > 300 && status < 200 {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
 	u.RespondAny(w, resp, http.StatusOK)
