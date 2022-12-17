@@ -114,6 +114,20 @@ func (r *ProjectRepository) ReturnProjectAnalytic(id string) (*models.ProjectAna
 		return nil, err
 	}
 
+	err = r.db.Raw("Select count(*) "+
+		"from issues where projectID = ? AND status = 'Reopened'", id).Scan(&ProjectAnalytic.ReopenedIssuesCount).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Raw("Select count(*) "+
+		"from issues where projectID = ? AND status = 'In Progress'", id).Scan(&ProjectAnalytic.InProgressIssuesCount).Error
+
+	if err != nil {
+		return nil, err
+	}
+
 	var averageTime sql.NullFloat64
 	err = r.db.Raw("select AVG(timeSpent) "+
 		"from issues where projectID = ?", id).Scan(&averageTime).Error

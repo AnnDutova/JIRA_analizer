@@ -1,13 +1,14 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"net/http"
+
 	"Backend/pkg/app"
 	"Backend/pkg/controllers"
 	"Backend/pkg/repository"
-	"flag"
 	"Backend/pkg/utils"
-	"fmt"
-	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -65,8 +66,8 @@ func main() {
 		controllers.GetCompareByGraphGroup).Methods("GET")
 
 	port := fmt.Sprintf("%d", config.Backend.Port)
-	fmt.Println(port)
 	logger.Info("Backend work on port ", port)
+
 	err := http.ListenAndServe(":"+port, router)
 
 	if err != nil {
