@@ -8,12 +8,17 @@ import (
 )
 
 func GetFirstGraphOnCompare(projects []string) (map[string]interface{}, int) {
+	logger := u.GetLogger()
+	logger.Info("Sent GetFirstGraphOnCompare request")
+
 	data := make(map[string]interface{}, 0)
 	count := make(map[string]interface{}, 0)
 	var emptyProject string
 	for ipr, project := range projects {
+		logger.Info("Sent CheckExistenceOnOpenTaskTimeTable request for project ", project)
 		issues, err := repository.DbCon.GetRepository().CheckExistenceOnOpenTaskTimeTable(project)
 		if err != nil {
+			logger.Error("Something went wrong on CheckExistenceOnOpenTaskTimeTable ", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnOpenTaskTimeTable", project), http.StatusBadRequest
 		}
@@ -48,11 +53,15 @@ func GetFirstGraphOnCompare(projects []string) (map[string]interface{}, int) {
 		resp["data"] = data
 
 	}
+	logger.Info("Get result GetFirstGraphOnCompare request")
 	return resp, http.StatusOK
 
 }
 
 func GetSecondGraphOnCompare(projects []string) (map[string]interface{}, int) {
+	logger := u.GetLogger()
+	logger.Info("Sent GetFirstGraphOnCompare request")
+
 	data := make(map[string]interface{}, 0)
 	open := make(map[string]interface{}, 0)
 	resolve := make(map[string]interface{}, 0)
@@ -61,26 +70,31 @@ func GetSecondGraphOnCompare(projects []string) (map[string]interface{}, int) {
 	var emptyProject string
 
 	for ipr, project := range projects {
+		logger.Info("Sent CheckExistenceOnTaskStateTimeTableOpen request for project ", project)
 		openTask, err := repository.DbCon.GetRepository().CheckExistenceOnTaskStateTimeTableOpen(project)
 		if err != nil {
+			logger.Error("Something went wrong on CheckExistenceOnTaskStateTimeTableOpen ", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnTaskStateTimeTableOpen", project), http.StatusBadRequest
 		}
-
+		logger.Info("Sent CheckExistenceOnTaskStateTimeTableResolved request for project ", project)
 		resolvedTask, err := repository.DbCon.GetRepository().CheckExistenceOnTaskStateTimeTableResolved(project)
 		if err != nil {
+			logger.Error("Something went wrong on CheckExistenceOnTaskStateTimeTableResolved", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnTaskStateTimeTableResolved", project), http.StatusBadRequest
 		}
-
+		logger.Info("Sent CheckExistenceOnTaskStateTimeTableReopened request for project ", project)
 		reopenedTask, err := repository.DbCon.GetRepository().CheckExistenceOnTaskStateTimeTableReopened(project)
 		if err != nil {
+			logger.Error("Something went wrong on CheckExistenceOnTaskStateTimeTableReopened ", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnTaskStateTimeTableReopened", project), http.StatusBadRequest
 		}
-
+		logger.Info("Sent CheckExistenceOnTaskStateTimeTableInProgress request for project ", project)
 		progressTask, err := repository.DbCon.GetRepository().CheckExistenceOnTaskStateTimeTableInProgress(project)
 		if err != nil {
+			logger.Error("Something went wrong on CheckExistenceOnTaskStateTimeTableInProgress ", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnTaskStateTimeTableInProgress", project), http.StatusBadRequest
 		}
@@ -143,10 +157,14 @@ func GetSecondGraphOnCompare(projects []string) (map[string]interface{}, int) {
 			fmt.Sprintf("Jira Analyzer Backend GetSecondGraphOnCompare. Has empty data for %s", emptyProject), fmt.Sprint(projects))
 		resp["data"] = data
 	}
+	logger.Info("Get result of GetFirstGraphOnCompare request")
 	return resp, http.StatusOK
 }
 
 func GetThirdGraphOnCompare(projects []string) (map[string]interface{}, int) {
+	logger := u.GetLogger()
+	logger.Info("Sent GetThirdGraphOnCompare request")
+
 	data := make(map[string]interface{}, 0)
 	open := make(map[string]interface{}, 0)
 	cls := make(map[string]interface{}, 0)
@@ -155,14 +173,17 @@ func GetThirdGraphOnCompare(projects []string) (map[string]interface{}, int) {
 	var emptyProject string
 
 	for ipr, project := range projects {
+		logger.Info("Sent CheckExistenceOnActivityByTaskTableClose request for project ", project)
 		closeTask, err := repository.DbCon.GetRepository().CheckExistenceOnActivityByTaskTableClose(project)
 		if err != nil {
+			logger.Error("Send result from CheckExistenceOnActivityByTaskTableClose ", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnActivityByTaskTableClose", project), http.StatusBadRequest
 		}
-
+		logger.Info("Sent CheckExistenceOnActivityByTaskTableOpen request for project ", project)
 		openTask, err := repository.DbCon.GetRepository().CheckExistenceOnActivityByTaskTableOpen(project)
 		if err != nil {
+			logger.Error("Send result from CheckExistenceOnActivityByTaskTableOpen ", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnActivityByTaskTableOpen", project), http.StatusBadRequest
 		}
@@ -230,16 +251,22 @@ func GetThirdGraphOnCompare(projects []string) (map[string]interface{}, int) {
 		data["categories"] = nil
 		resp["data"] = data
 	}
+	logger.Info("Get result of GetThirdGraphOnCompare request")
 	return resp, http.StatusOK
 }
 
 func GetForthGraphOnCompare(projects []string) (map[string]interface{}, int) {
+	logger := u.GetLogger()
+	logger.Info("Sent GetForthGraphOnCompare request")
+
 	data := make(map[string]interface{}, 0)
 	category := make(map[string]interface{}, 0)
 	var emptyProject string
 	for ipr, project := range projects {
+		logger.Info("Sent CheckExistenceOnComplexityTaskTimeTable request", project)
 		issues, err := repository.DbCon.GetRepository().CheckExistenceOnComplexityTaskTimeTable(project)
 		if err != nil {
+			logger.Info("Something went wrong CheckExistenceOnComplexityTaskTimeTable request", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnComplexityTaskTimeTable", project), http.StatusBadRequest
 		}
@@ -265,16 +292,23 @@ func GetForthGraphOnCompare(projects []string) (map[string]interface{}, int) {
 		data["categories"] = nil
 		resp["data"] = data
 	}
+	logger.Info("Get result of GetForthGraphOnCompare request")
 	return resp, http.StatusOK
 }
 
 func GetFifthGraphOnCompare(projects []string) (map[string]interface{}, int) {
+	logger := u.GetLogger()
+	logger.Info("Sent GetFifthGraphOnCompare request")
+
 	data := make(map[string]interface{}, 0)
 	category := make(map[string]interface{}, 0)
 	var emptyProject string
+
 	for ipr, project := range projects {
+		logger.Info("Sent CheckExistenceOnTaskPriorityCountTableOpen request", project)
 		issues, err := repository.DbCon.GetRepository().CheckExistenceOnTaskPriorityCountTableOpen(project)
 		if err != nil {
+			logger.Info("Something went wrong CheckExistenceOnTaskPriorityCountTableOpen request", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnTaskPriorityCountTable", project), http.StatusBadRequest
 		}
@@ -305,16 +339,22 @@ func GetFifthGraphOnCompare(projects []string) (map[string]interface{}, int) {
 		data["categories"] = nil
 		resp["data"] = data
 	}
+	logger.Info("Get result of GetFifthGraphOnCompare request")
 	return resp, http.StatusOK
 }
 
 func GetSixthGraphOnCompare(projects []string) (map[string]interface{}, int) {
+	logger := u.GetLogger()
+	logger.Info("Sent GetSixthGraphOnCompare request")
+
 	data := make(map[string]interface{}, 0)
 	category := make(map[string]interface{}, 0)
 	var emptyProject string
 	for ipr, project := range projects {
+		logger.Info("Sent CheckExistenceOnTaskPriorityCountTableClose request", project)
 		issues, err := repository.DbCon.GetRepository().CheckExistenceOnTaskPriorityCountTableClose(project)
 		if err != nil {
+			logger.Info("Something wrong CheckExistenceOnTaskPriorityCountTableClose request", err.Error())
 			return u.Message(false, err.Error(),
 				"Jira Analyzer Backend CheckExistenceOnTaskPriorityCountTable", project), http.StatusBadRequest
 		}
@@ -345,5 +385,6 @@ func GetSixthGraphOnCompare(projects []string) (map[string]interface{}, int) {
 		data["categories"] = nil
 		resp["data"] = data
 	}
+	logger.Info("Get result of GetSixthGraphOnCompare request")
 	return resp, http.StatusOK
 }
