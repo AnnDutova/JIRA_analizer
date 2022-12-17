@@ -69,30 +69,6 @@ func GetReturnTimeSpentOnAllTasks(project string) (map[string]interface{}, int) 
 	return resp, http.StatusOK
 }
 
-/*func GetReturnTheMostActiveCreators(project string) (map[string]interface{}, int) {
-	issues, err := repository.DbCon.GetRepository().ReturnTheMostActiveCreators(project)
-	if err != nil {
-		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend GetReturnTheMostActiveCreators", project), http.StatusBadRequest
-	}
-
-	resp := u.Message(true, "success",
-		"Jira Analyzer Backend GetReturnTheMostActiveCreators", project)
-	if len(issues) > 0 {
-		resp["data"] = issues
-		category := make(map[string]interface{}, len(issues))
-		for _, el := range issues {
-			category[el.Title] = el.Count
-		}
-		resp["categories"] = u.SortCategories(category)
-	} else {
-		resp["data"] = nil
-		resp["categories"] = nil
-	}
-
-	return resp, http.StatusOK
-}*/
-
 func GetReturnPriorityCountOfProjectOpen(project string) (map[string]interface{}, int) {
 	logger := u.GetLogger()
 	logger.Info("Send GetReturnTimeSpentOnAllTasks request")
@@ -246,10 +222,10 @@ func GetReturnTaskStateTime(project string) (map[string]interface{}, int) {
 		category["progress"] = nil
 	}
 
-	if len(openTasks) > 0 && len(reopenedTask) > 0 && len(resolveTask) > 0 && len(inProgressTask) > 0 {
+	if len(openTasks) > 0 || len(reopenedTask) > 0 || len(resolveTask) > 0 || len(inProgressTask) > 0 {
 		data["categories"] = category
 		resp["data"] = data
-	} else {
+	} else if len(openTasks) == 0 && len(reopenedTask) == 0 && len(resolveTask) > 0 && len(inProgressTask) > 0 {
 		resp["data"] = nil
 	}
 	logger.Info("Get result of GetReturnTaskStateTime request")
@@ -327,10 +303,10 @@ func GetReturnActivityByTask(project string) (map[string]interface{}, int) {
 	} else {
 		category["all"] = nil
 	}
-	if len(openTasks) > 0 && len(closeTasks) > 0 {
+	if len(openTasks) > 0 || len(closeTasks) > 0 {
 		data["categories"] = category
 		resp["data"] = data
-	} else {
+	} else if len(openTasks) == 0 && len(closeTasks) == 0 {
 		resp["data"] = nil
 	}
 	logger.Info("Get result of GetReturnActivityByTask request")

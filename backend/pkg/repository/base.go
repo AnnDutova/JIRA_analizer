@@ -1,12 +1,11 @@
 package repository
 
 import (
+	"Backend/pkg/app"
 	"fmt"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
-	"os"
 )
 
 type DBController struct {
@@ -14,8 +13,8 @@ type DBController struct {
 	repo *Repository
 }
 
-func NewDBController() *DBController {
-	db, err := setDBConnection()
+func NewDBController(config *app.Config) *DBController {
+	db, err := setDBConnection(config)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,22 +27,12 @@ func NewDBController() *DBController {
 
 var DbCon *DBController
 
-func init() {
-	DbCon = NewDBController()
-}
-
-func setDBConnection() (*gorm.DB, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
-	}
-
-	username := os.Getenv("db_user")
-	password := os.Getenv("db_pass")
-	dbName := os.Getenv("db_name")
-	dbHost := os.Getenv("db_host")
-
-	dbUri := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, username, dbName, password) //Создать строку подключения
+func setDBConnection(config *app.Config) (*gorm.DB, error) {
+	username := config.DbSettings.DbUsername
+	password := config.DbSettings.DbPassword
+	dbName := config.DbSettings.DbName
+	dbHost := config.DbSettings.DbHost
+	dbUri := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, username, dbName, password)
 
 	db, err := gorm.Open(postgres.Open(dbUri), &gorm.Config{})
 	if err != nil {

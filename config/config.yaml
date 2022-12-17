@@ -15,3 +15,4 @@ ConnectorSettings:
   
 Backend:
   updateTime: 10 #in minutes
+  port: 8000

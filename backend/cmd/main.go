@@ -1,15 +1,28 @@
 package main
 
 import (
+	"Backend/pkg/app"
 	"Backend/pkg/controllers"
+	"Backend/pkg/repository"
+	"flag"
 	"Backend/pkg/utils"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
-	"os"
+
+	"github.com/gorilla/mux"
 )
 
+var (
+	configPath string
+)
+
+func init() {
+	flag.StringVar(&configPath, "config-path", "../config/config.yaml", "path to config file")
+}
+
 func main() {
+	config := app.NewConfig(configPath)
+	repository.DbCon = repository.NewDBController(config)
 	utils.Init()
 	logger := utils.GetLogger()
 	logger.Info("Start backend work")
@@ -51,11 +64,7 @@ func main() {
 	router.HandleFunc("/api/v1/compare/{group:[0-9]}",
 		controllers.GetCompareByGraphGroup).Methods("GET")
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8000"
-	}
-
+	port := fmt.Sprintf("%d", config.Backend.Port)
 	fmt.Println(port)
 	logger.Info("Backend work on port ", port)
 	err := http.ListenAndServe(":"+port, router)
