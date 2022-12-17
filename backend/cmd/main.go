@@ -2,6 +2,7 @@ package main
 
 import (
 	"Backend/pkg/controllers"
+	"Backend/pkg/utils"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -9,6 +10,9 @@ import (
 )
 
 func main() {
+	utils.Init()
+	logger := utils.GetLogger()
+	logger.Info("Start backend work")
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/v1/projects",
@@ -53,7 +57,7 @@ func main() {
 	}
 
 	fmt.Println(port)
-
+	logger.Info("Backend work on port ", port)
 	err := http.ListenAndServe(":"+port, router)
 
 	if err != nil {
