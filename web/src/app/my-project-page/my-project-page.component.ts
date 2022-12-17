@@ -20,6 +20,13 @@ export class MyProjectPageComponent implements OnInit {
       console.log(projects)
       this.myProjects = projects.data
       this.loading = false
+    }, error => {
+      if (error.status == 0){
+        alert("Unable to connect to backend")
+      }
+      if (error.status == 400){
+        alert("Unable to connect to DB")
+      }
     })
   }
 

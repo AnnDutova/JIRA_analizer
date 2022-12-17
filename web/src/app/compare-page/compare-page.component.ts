@@ -21,7 +21,15 @@ export class ComparePageComponent implements OnInit {
     this.myProjectService.getAll().subscribe(projects => {
       console.log(projects)
       this.projects = projects.data
-    })
+    },
+      error => {
+        if (error.status == 0){
+          alert("Unable to connect to backend")
+        }
+        if (error.status == 400){
+          alert("Unable to connect to DB")
+        }
+      })
   }
 
   onClickCompare(): void {

@@ -26,7 +26,15 @@ export class ProjectPageComponent implements OnInit {
       console.log("test", projects.data)
       this.loading = false
       this.pageInfo = projects.pageInfo
-    })
+    },
+      error => {
+        if (error.status == 0){
+          alert("Unable to connect to backend")
+        }
+        if (error.status == 400){
+          alert("Unable to connect to JIRA connector")
+        }
+      })
   }
 
   gty(page: any){
