@@ -265,3 +265,57 @@ func (con *Connection) GetFormattedIssues(projectName string) ([]datatransformer
 	}
 	return issues, nil
 }
+
+func (con *Connection) GetProjectInfo(projectKey string) (int, string, error) {
+	maxTimeSleepMillsec := con.maxTimeSleep
+	timeSleepMillsec := con.minTimeSleep
+	needWait := false
+CON:
+	if needWait {
+		time.Sleep(time.Duration(timeSleepMillsec) * time.Millisecond)
+	}
+	res, err := http.Get(con.url + "/rest/api/2/project/" + projectKey)
+	if err != nil {
+		needWait = true
+		if timeSleepMillsec < maxTimeSleepMillsec {
+			timeSleepMillsec *= 2
+			if timeSleepMillsec > maxTimeSleepMillsec {
+				timeSleepMillsec = maxTimeSleepMillsec
+			}
+			goto CON
+		}
+		return 0, "", errors.New("Error when try to get request in GetProjectInfo: " + err.Error())
+	}
+	resByte, err := io.ReadAll(res.Body)
+	if err != nil {
+		needWait = true
+		if timeSleepMillsec < maxTimeSleepMillsec {
+			timeSleepMillsec *= 2
+			if timeSleepMillsec > maxTimeSleepMillsec {
+				timeSleepMillsec = maxTimeSleepMillsec
+			}
+			goto CON
+		}
+		return 0, "", errors.New("Error when read response in GetProjectInfo: " + err.Error())
+	}
+	var body struct {
+		Name          string   `json:"name,omitempty" structs:"name,omitempty"`
+		Id            string   `json:"id,omitempty" structs:"id,omitempty"`
+		ErrorMessages []string `json:"errorMessages,omitempty" structs:"errorMessages,omitempty"`
+	}
+	err = json.Unmarshal(resByte, &body)
+	if err != nil {
+		return 0, "", errors.New("Error when unmarshaling json in GetProjectInfo: " + err.Error())
+	}
+	errorMessages := body.ErrorMessages
+	if len(errorMessages) != 0 {
+		return 0, "", errors.New(errorMessages[0])
+	}
+	idString := body.Id
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		return 0, "", errors.New("Error project id is not a number: " + err.Error())
+	}
+	name := body.Name
+	return id, name, nil
+}
