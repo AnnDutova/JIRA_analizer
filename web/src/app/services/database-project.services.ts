@@ -43,4 +43,9 @@ export class DatabaseProjectServices {
     let projectsString = 'http://localhost:8000/api/v1/isAnalyzed?project='+projectName
     return this.http.get<IRequestObject>(projectsString)
   }
+
+  isEmpty(projectName: string): Observable<IRequestObject>{
+    let projectsString = 'http://localhost:8000/api/v1/isEmpty?project='+projectName
+    return this.http.get<IRequestObject>(projectsString)
+  }
 }

@@ -41,32 +41,26 @@ export class ProjectStatPageComponent implements OnInit {
 
     var openTaskElem = document.getElementById('open-task') as HTMLElement;
     var openTaskTitle = document.getElementById('open-task-title') as HTMLElement;
-    if (this.ids.includes("1")){
-      this.dbProjectService.getGraph("1", this.projects[0]).subscribe(info => {
-        if (info.data == null) {
-          openTaskElem.remove()
-          openTaskTitle.textContent = "Гистограмма, отражающая время, которое задачи провели в открытом состоянии - " +
-            "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
-        } else {
+    this.dbProjectService.getGraph("1", this.projects[0]).subscribe(info => {
+      if (info.data == null) {
+        openTaskElem.remove()
+        openTaskTitle.remove()
+      } else {
+        // @ts-ignore
+        openTaskChartOptions.xAxis["categories"] = info.data["categories"]
+        var count = []
+        for (let i = 0; i < info.data["categories"].length; i++) {
           // @ts-ignore
-          openTaskChartOptions.xAxis["categories"] = info.data["categories"]
-          var count = []
-          for (let i = 0; i < info.data["categories"].length; i++) {
-            // @ts-ignore
-            count.push(info.data["count"][info.data["categories"][i]])
-          }
-          openTaskChartOptions.series?.push({
-            name: this.projects[0],
-            type: "column",
-            data: count
-          })
-          this.openTaskChart = new Chart(openTaskChartOptions)
+          count.push(info.data["count"][info.data["categories"][i]])
         }
-      })
-    } else{
-      openTaskElem.remove()
-      openTaskTitle.remove()
-    }
+        openTaskChartOptions.series?.push({
+          name: this.projects[0],
+          type: "column",
+          data: count
+        })
+        this.openTaskChart = new Chart(openTaskChartOptions)
+      }
+    })
 
 
 
@@ -81,7 +75,7 @@ export class ProjectStatPageComponent implements OnInit {
 
 
     this.dbProjectService.getGraph("2", this.projects[0]).subscribe(info => {
-      if (!this.ids.includes("2")) {
+      if (info.data == null) {
         openStateElem.remove()
         resolveStateElem.remove()
         progressStateElem.remove()
@@ -178,7 +172,7 @@ export class ProjectStatPageComponent implements OnInit {
     var activityByTaskElem = document.getElementById('activity-by-task') as HTMLElement;
     var activityByTaskTitle = document.getElementById('activity-by-task-title') as HTMLElement;
     this.dbProjectService.getGraph("3", this.projects[0]).subscribe(info => {
-      if (!this.ids.includes("3")) {
+      if (info.data == null) {
         activityByTaskElem.remove()
         activityByTaskTitle.remove()
       }
@@ -220,7 +214,7 @@ export class ProjectStatPageComponent implements OnInit {
     var complexityTaskElem = document.getElementById('complexity-task') as HTMLElement;
     var complexityTaskTitle = document.getElementById('complexity-task-title') as HTMLElement;
       this.dbProjectService.getGraph("4", this.projects[0]).subscribe(info => {
-        if (!this.ids.includes("4")) {
+        if (info.data == null) {
           complexityTaskElem.remove()
           complexityTaskTitle.remove()
         }
@@ -251,7 +245,7 @@ export class ProjectStatPageComponent implements OnInit {
     var taskPriorityElem = document.getElementById('task-priority') as HTMLElement;
     var taskPriorityTitle = document.getElementById('task-priority-title') as HTMLElement;
       this.dbProjectService.getGraph("5", this.projects[0]).subscribe(info => {
-        if (!this.ids.includes("5")) {
+        if (info.data == null) {
           taskPriorityElem.remove()
           taskPriorityTitle.remove()
         }
@@ -282,7 +276,7 @@ export class ProjectStatPageComponent implements OnInit {
     var closeTaskPriorityElem = document.getElementById('close-task-priority') as HTMLElement;
     var closeTaskPriorityTitle = document.getElementById('close-task-priority-title') as HTMLElement;
       this.dbProjectService.getGraph("6", this.projects[0]).subscribe(info => {
-        if (!this.ids.includes("6")) {
+        if (info.data == null) {
           closeTaskPriorityElem.remove()
           closeTaskPriorityTitle.remove()
         }

@@ -43,6 +43,9 @@ export class MyProjectComponent implements OnInit{
       this.stat.AllIssuesCount = projects.data["allIssuesCount"]
       this.stat.AverageTime = projects.data["averageTime"]
       this.stat.CloseIssuesCount = projects.data["closeIssuesCount"]
+      this.stat.ReopenedIssuesCount = projects.data["reopenedIssuesCount"]
+      this.stat.ResolvedIssuesCount = projects.data["resolvedIssuesCount"]
+      this.stat.ProgressIssuesCount = projects.data["progressIssuesCount"]
 
       console.log(projects.data)
       console.log(this.stat)
@@ -56,24 +59,29 @@ export class MyProjectComponent implements OnInit{
   }
 
   async processProject() {
-        this.dbProjectService.deleteGraphs(this.myProject.Name.toString()).subscribe(info => {
-          this.complited = 0;
-          this.checked = 0;
-          this.checkboxes.forEach((box: SettingBox) =>{
-            if (box.Checked){
-              this.checked++
-            }
-          })
-          for (const box of this.checkboxes) {
-            if (box.Checked){
-              this.dbProjectService.makeGraph(box.BoxId.toString(), this.myProject.Name.toString()).subscribe(info => {
-                this.complited++;
-              })
-            }
+    this.dbProjectService.isEmpty(this.myProject.Name.toString()).subscribe(resp => {
+      if (resp.data["isEmpty"]){
+        alert("Project is empty, analytical tasks are not available")
+        return
+      }
+      this.dbProjectService.deleteGraphs(this.myProject.Name.toString()).subscribe(info => {
+        this.complited = 0;
+        this.checked = 0;
+        this.checkboxes.forEach((box: SettingBox) => {
+          if (box.Checked) {
+            this.checked++
           }
-          this.processed = true
         })
-
+        for (const box of this.checkboxes) {
+          if (box.Checked) {
+            this.dbProjectService.makeGraph(box.BoxId.toString(), this.myProject.Name.toString()).subscribe(info => {
+              this.complited++;
+            })
+          }
+        }
+        this.processed = true
+      })
+    })
   }
 
   checkResult(){
@@ -124,4 +132,7 @@ class ProjectStat {
   AverageTime: number;
   CloseIssuesCount: number;
   OpenIssuesCount: number;
+  ResolvedIssuesCount: number;
+  ReopenedIssuesCount: number;
+  ProgressIssuesCount: number
 }

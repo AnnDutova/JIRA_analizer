@@ -1,10 +1,5 @@
-.compare-body{
-  width: 75%;
-  margin: auto;
-}
-
 button {
-  margin-bottom: 100px;
+  margin-top: 20px;
   border: none;
   border-radius: 2px;
   display: block;
@@ -15,6 +10,10 @@ button {
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
   background-color: #e5c04d;
+}
+
+.header{
+  margin-bottom: 20px;
 }
 
 .btn {
@@ -31,7 +30,7 @@ button {
 .body_empty{
   position: relative;
   top: 200px;
-  left: 400px;
+  left: 600px;
 }
 
 .icon{
@@ -41,6 +40,6 @@ button {
 }
 
 img {
-  width: 10%;
-  height: 10%;
+  width: 8%;
+  height: 8%;
 }
