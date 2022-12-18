@@ -36,19 +36,15 @@ export class ProjectStatPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    var taskNames = ["Гистограмма, отражающая время, которое задачи провели в открытом состоянии",
-      "Диаграммы, которые показывают распределение времени по состоянием задач",
-      "График активности по задачам",
-      "График сложности задач",
-      "График, отражающий приоритетность всех задач",
-      "График, отражающий приоритетность закрытых задач"]
 
     console.log(this.projects, this.ids)
 
     var openTaskElem = document.getElementById('open-task') as HTMLElement;
+    var openTaskTitle = document.getElementById('open-task-title') as HTMLElement;
     this.dbProjectService.getGraph("1", this.projects[0]).subscribe(info => {
       if (info.data == null) {
         openTaskElem.remove()
+        openTaskTitle.remove()
       } else {
         // @ts-ignore
         openTaskChartOptions.xAxis["categories"] = info.data["categories"]
@@ -67,21 +63,33 @@ export class ProjectStatPageComponent implements OnInit {
     })
 
 
+
     var openStateElem = document.getElementById('open-state') as HTMLElement;
     var resolveStateElem = document.getElementById('resolve-state') as HTMLElement;
     var progressStateElem = document.getElementById('progress-state') as HTMLElement;
     var reopenStateElem = document.getElementById('reopen-state') as HTMLElement;
+    var openStateTitle = document.getElementById('open-state-title') as HTMLElement;
+    var resolveStateTitle = document.getElementById('resolve-state-title') as HTMLElement;
+    var progressStateTitle = document.getElementById('progress-state-title') as HTMLElement;
+    var reopenStateTitle = document.getElementById('reopen-state-title') as HTMLElement;
+
+
     this.dbProjectService.getGraph("2", this.projects[0]).subscribe(info => {
       if (info.data == null) {
         openStateElem.remove()
         resolveStateElem.remove()
         progressStateElem.remove()
         reopenStateElem.remove()
+        openStateTitle.remove()
+        resolveStateTitle.remove()
+        progressStateTitle.remove()
+        reopenStateTitle.remove()
       }
       else {
         if (info.data["open"] == null) {
-          //вывести, что в каком-то из проектов отсутствуют открытые задачи
           openStateElem.remove()
+          openStateTitle.textContent = "Диаграмма, демонстрирующая распределение времени по состоянию \"Open\" - " +
+            "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
         } else {
           // @ts-ignore
           openStateChartOptions.xAxis["categories"] = info.data["categories"]["open"]
@@ -98,8 +106,9 @@ export class ProjectStatPageComponent implements OnInit {
           this.openStateChart = new Chart(openStateChartOptions)
         }
         if (info.data["resolve"] == null) {
-          //вывести, что в каком-то из проектов отсутствуют закрытые задачи
           resolveStateElem.remove()
+          resolveStateTitle.textContent = "Диаграмма, демонстрирующая распределение времени по состоянию \"Resolve\" - " +
+            "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
         } else {
           // @ts-ignore
           resolveStateChartOptions.xAxis["categories"] = info.data["categories"]["resolve"]
@@ -117,8 +126,9 @@ export class ProjectStatPageComponent implements OnInit {
         }
 
         if (info.data["progress"] == null) {
-          //вывести, что в каком-то из проектов отсутствуют закрытые задачи
           progressStateElem.remove()
+          progressStateTitle.textContent = "Диаграмма, демонстрирующая распределение времени по состоянию \"Progress\" - " +
+            "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
         } else {
           // @ts-ignore
           progressStateChartOptions.xAxis["categories"] = info.data["categories"]["progress"]
@@ -137,8 +147,9 @@ export class ProjectStatPageComponent implements OnInit {
 
 
         if (info.data["reopen"] == null) {
-          //вывести, что в каком-то из проектов отсутствуют открытые задачи
           reopenStateElem.remove()
+          reopenStateTitle.textContent = "Диаграмма, демонстрирующая распределение времени по состоянию \"Reopen\" - " +
+            "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
         } else {
           // @ts-ignore
           reopenStateChartOptions.xAxis["categories"] = info.data["categories"]["reopen"]
@@ -159,13 +170,17 @@ export class ProjectStatPageComponent implements OnInit {
 
 
     var activityByTaskElem = document.getElementById('activity-by-task') as HTMLElement;
+    var activityByTaskTitle = document.getElementById('activity-by-task-title') as HTMLElement;
     this.dbProjectService.getGraph("3", this.projects[0]).subscribe(info => {
       if (info.data == null) {
         activityByTaskElem.remove()
+        activityByTaskTitle.remove()
       }
       else {
         if (info.data["close"] == null) {
           activityByTaskElem.remove()
+          activityByTaskTitle.textContent = "График активности по задачам - " +
+            "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
         } else {
           // @ts-ignore
           activityByTaskChartOptions.xAxis["categories"] = info.data["categories"]["all"]
@@ -197,13 +212,17 @@ export class ProjectStatPageComponent implements OnInit {
 
 
     var complexityTaskElem = document.getElementById('complexity-task') as HTMLElement;
+    var complexityTaskTitle = document.getElementById('complexity-task-title') as HTMLElement;
       this.dbProjectService.getGraph("4", this.projects[0]).subscribe(info => {
         if (info.data == null) {
           complexityTaskElem.remove()
+          complexityTaskTitle.remove()
         }
         else {
-          if (info.data["categories"] == null) {
+          if (info.data == null) {
             complexityTaskElem.remove()
+            complexityTaskTitle.textContent = "График сложности задач - " +
+              "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
           } else {
             // @ts-ignore
             complexityTaskChartOptions.xAxis["categories"] = info.data["categories"]
@@ -224,13 +243,17 @@ export class ProjectStatPageComponent implements OnInit {
 
 
     var taskPriorityElem = document.getElementById('task-priority') as HTMLElement;
+    var taskPriorityTitle = document.getElementById('task-priority-title') as HTMLElement;
       this.dbProjectService.getGraph("5", this.projects[0]).subscribe(info => {
         if (info.data == null) {
           taskPriorityElem.remove()
+          taskPriorityTitle.remove()
         }
         else {
           if (info.data["categories"] == null) {
             taskPriorityElem.remove()
+            taskPriorityTitle.textContent = "График, отражающий приоритетность всех задач - " +
+              "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
           } else {
             // @ts-ignore
             taskPriorityChartOptions.xAxis["categories"] = info.data["categories"]
@@ -251,13 +274,17 @@ export class ProjectStatPageComponent implements OnInit {
 
 
     var closeTaskPriorityElem = document.getElementById('close-task-priority') as HTMLElement;
+    var closeTaskPriorityTitle = document.getElementById('close-task-priority-title') as HTMLElement;
       this.dbProjectService.getGraph("6", this.projects[0]).subscribe(info => {
         if (info.data == null) {
           closeTaskPriorityElem.remove()
+          closeTaskPriorityTitle.remove()
         }
         else {
-          if (info.data["categories"] == null) {
+          if (info.data == null) {
             closeTaskPriorityElem.remove()
+            closeTaskPriorityTitle.textContent = "График, отражающий приоритетность закрытых задач - " +
+              "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
           } else {
             // @ts-ignore
             closeTaskPriorityChartOptions.xAxis["categories"] = info.data["categories"]

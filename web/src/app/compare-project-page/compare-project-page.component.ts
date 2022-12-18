@@ -304,4 +304,7 @@ class ReqData {
   averageTime: number;
   closeIssuesCount: number;
   openIssuesCount: number;
+  resolvedIssuesCount: number;
+  reopenedIssuesCount: number;
+  progressIssuesCount: number;
 }
