@@ -6,7 +6,7 @@ table {
   border-spacing: 0;
 }
 tr:hover{
-  background: rgba(236, 222, 177, 0.76);
+  background: #f3faf4;
 }
 tr {
   border-bottom: 1px solid #d0d0d0;
@@ -79,10 +79,10 @@ table, th, td {
 
 .btnAdd {
   /*background-color: #2e7d32;*/
-  background-color: #e5c04d;
+  background: #a6deb0;
 }
 
 .btnDelete {
  /*background-color: #b71c1c;*/
-  background-color: #e5d3b1;
+  background-color: #f58282;
 }
