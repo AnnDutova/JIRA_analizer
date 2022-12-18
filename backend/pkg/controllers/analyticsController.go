@@ -168,6 +168,15 @@ var IsAnalyzed = func(w http.ResponseWriter, r *http.Request) {
 	u.RespondAny(w, resp, http.StatusOK)
 }
 
+var IsEmpty = func(w http.ResponseWriter, r *http.Request) {
+	project := r.FormValue("project")
+	resp, status := services.IsEmptyProject(project)
+	if status != http.StatusOK {
+		u.RespondAny(w, nil, http.StatusInternalServerError)
+	}
+	u.RespondAny(w, resp, http.StatusOK)
+}
+
 var DeleteGraphByProject = func(w http.ResponseWriter, r *http.Request) {
 	project := r.FormValue("project")
 

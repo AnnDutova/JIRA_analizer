@@ -546,14 +546,14 @@ func MakePriorityCountOfProjectClose(project string) (map[string]interface{}, in
 
 func IsAnalyzedGraph(project string) (map[string]interface{}, int) {
 	logger := u.GetLogger()
-	logger.Info("Send GetReturnTimeSpentOnAllTasks request")
+	logger.Info("Send IsAnalyzedGraph request")
 
 	logger.Info("Send IsAnalyzed request")
 	ok, err := repository.DbCon.GetRepository().IsAnalyzed(project)
 	if err != nil {
 		logger.Error("Something went wrong on IsAnalyzed request")
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend MakePriorityCountOfProjectClose", project), http.StatusBadRequest
+			"Jira Analyzer Backend IsAnalyzedGraph", project), http.StatusBadRequest
 	}
 
 	resp := u.Message(true, "success",
@@ -563,6 +563,28 @@ func IsAnalyzedGraph(project string) (map[string]interface{}, int) {
 	data["isAnalyzed"] = ok
 	resp["data"] = data
 	logger.Info("Get result of IsAnalyzedGraph request")
+	return resp, http.StatusOK
+}
+
+func IsEmptyProject(project string) (map[string]interface{}, int) {
+	logger := u.GetLogger()
+	logger.Info("Send IsEmptyProject request")
+
+	logger.Info("Send IsEmpty request")
+	ok, err := repository.DbCon.GetRepository().IsEmpty(project)
+	if err != nil {
+		logger.Error("Something went wrong on IsEmpty request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend IsEmptyProject", project), http.StatusBadRequest
+	}
+
+	resp := u.Message(true, "success",
+		"Jira Analyzer Backend IsEmptyProject", project)
+
+	data := make(map[string]interface{}, 1)
+	data["isEmpty"] = ok
+	resp["data"] = data
+	logger.Info("Get result of IsEmptyProject request")
 	return resp, http.StatusOK
 }
 
