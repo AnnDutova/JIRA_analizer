@@ -26,12 +26,12 @@ type IHistories interface {
 
 type IAnalytic interface {
 	IsEmpty(projectName string) (bool, error)
-	IsAnalyzed(projectName string) (bool, error)
+	IsAnalyzed(projectName, state string) (bool, error)
 	//get
 	ReturnTimeCountOfIssuesInCloseState(projectName string) ([]models.GraphOutput, error)
 	ReturnTimeSpentOnAllTasks(projectName string) ([]models.GraphOutput, error)
 
-	ReturnPriorityCountOfProjectOpen(projectName string) ([]models.GraphOutput, error)
+	ReturnPriorityCountOfProjectAll(projectName string) ([]models.GraphOutput, error)
 	ReturnPriorityCountOfProjectClose(projectName string) ([]models.GraphOutput, error)
 
 	ReturnCountOpenTaskInDay(projectName string) ([]models.GraphOutput, error)
@@ -46,7 +46,7 @@ type IAnalytic interface {
 	MakeTimeCountOfIssuesInCloseState(projectName string) error
 	MakeTimeSpentOnAllTasks(projectName string) error
 
-	MakePriorityCountOfProjectOpen(projectName string) error
+	MakePriorityCountOfProjectAll(projectName string) error
 	MakePriorityCountOfProjectClose(projectName string) error
 
 	MakeCountOpenTaskInDay(projectName string) error
@@ -70,7 +70,7 @@ type IAnalytic interface {
 
 	DeleteComplexityTaskTime(projectName string) error
 
-	DeleteTaskPriorityCountOpen(projectName string) error
+	DeleteTaskPriorityCountAll(projectName string) error
 	DeleteTaskPriorityCountClose(projectName string) error
 }
 
