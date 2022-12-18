@@ -88,29 +88,29 @@ func GetReturnTimeSpentOnAllTasks(project string) (map[string]interface{}, int) 
 	return resp, http.StatusOK
 }
 
-func GetReturnPriorityCountOfProjectOpen(project string) (map[string]interface{}, int) {
+func GetReturnPriorityCountOfProjectAll(project string) (map[string]interface{}, int) {
 	logger := u.GetLogger()
-	logger.Info("Send GetReturnTimeSpentOnAllTasks request")
+	logger.Info("Send GetReturnPriorityCountOfProjectAll request")
 
 	data := make(map[string]interface{}, 0)
 	resp := make(map[string]interface{}, 0)
 
-	logger.Info("Send ReturnPriorityCountOfProjectOpen request")
-	issues, err := repository.DbCon.GetRepository().ReturnPriorityCountOfProjectOpen(project)
+	logger.Info("Send ReturnPriorityCountOfProjectAll request")
+	issues, err := repository.DbCon.GetRepository().ReturnPriorityCountOfProjectAll(project)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			resp = u.Message(true, "success",
-				"Jira Analyzer Backend GetReturnPriorityCountOfProjectOpen", project)
+				"Jira Analyzer Backend ReturnPriorityCountOfProjectAll", project)
 			resp["data"] = nil
 			return resp, http.StatusOK
 		}
-		logger.Error("Something went wrong ReturnPriorityCountOfProjectOpen", err.Error())
+		logger.Error("Something went wrong ReturnPriorityCountOfProjectAll", err.Error())
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend GetReturnPriorityCountOfProject", project), http.StatusBadRequest
+			"Jira Analyzer Backend ReturnPriorityCountOfProjectAll", project), http.StatusBadRequest
 	}
 
 	resp = u.Message(true, "success",
-		"Jira Analyzer Backend GetReturnPriorityCountOfProject", project)
+		"Jira Analyzer Backend GetReturnPriorityCountOfProjectAll", project)
 	if len(issues) > 0 {
 		category := make([]string, 0, len(issues))
 		names := make(map[string]interface{}, 0)
@@ -126,7 +126,7 @@ func GetReturnPriorityCountOfProjectOpen(project string) (map[string]interface{}
 		data["count"] = nil
 		resp["data"] = data
 	}
-	logger.Info("Get result from GetReturnPriorityCountOfProjectOpen request")
+	logger.Info("Get result from GetReturnPriorityCountOfProjectAll request")
 	return resp, http.StatusOK
 }
 
@@ -470,12 +470,12 @@ func MakeTimeSpentOnAllTasks(project string) (map[string]interface{}, int) {
 	return resp, http.StatusOK
 }
 
-func MakePriorityCountOfProjectOpen(project string) (map[string]interface{}, int) {
+func MakePriorityCountOfProjectAll(project string) (map[string]interface{}, int) {
 	logger := u.GetLogger()
 	logger.Info("Send GetReturnTimeSpentOnAllTasks request")
 
 	logger.Info("Send MakePriorityCountOfProjectOpen request")
-	err := repository.DbCon.GetRepository().MakePriorityCountOfProjectOpen(project)
+	err := repository.DbCon.GetRepository().MakePriorityCountOfProjectAll(project)
 	if err != nil {
 		logger.Error("Something went wrong on MakePriorityCountOfProjectOpen request")
 		return u.Message(false, err.Error(),
@@ -509,7 +509,7 @@ func IsAnalyzedGraph(project string) (map[string]interface{}, int) {
 	logger.Info("Send IsAnalyzedGraph request")
 
 	logger.Info("Send IsAnalyzed request")
-	ok, err := repository.DbCon.GetRepository().IsAnalyzed(project)
+	ok, err := repository.DbCon.GetRepository().IsAnalyzed(project, "")
 	if err != nil {
 		logger.Error("Something went wrong on IsAnalyzed request")
 		return u.Message(false, err.Error(),
@@ -616,12 +616,12 @@ func DeleteGraphsByProject(project string) (map[string]interface{}, int) {
 			"Jira Analyzer Backend DeleteComplexityTaskTime", project), http.StatusBadRequest
 	}
 
-	logger.Info("Send DeleteTaskPriorityCountOpen request")
-	err = repository.DbCon.GetRepository().DeleteTaskPriorityCountOpen(project)
+	logger.Info("Send DeleteTaskPriorityCountAll request")
+	err = repository.DbCon.GetRepository().DeleteTaskPriorityCountAll(project)
 	if err != nil {
-		logger.Error("Something went wrong on DeleteTaskPriorityCountOpen request")
+		logger.Error("Something went wrong on DeleteTaskPriorityCountAll request")
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend DeleteTaskPriorityCountOpen", project), http.StatusBadRequest
+			"Jira Analyzer Backend DeleteTaskPriorityCountAll", project), http.StatusBadRequest
 	}
 
 	logger.Info("Send DeleteTaskPriorityCountClose request")

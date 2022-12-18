@@ -20,8 +20,13 @@ func NewAnalyticRepository(db_ *gorm.DB) *AnalyticRepository {
 	}
 }
 
-func (r *AnalyticRepository) isDataExist(tableName string, projectId int) (bool, error) {
-	query := fmt.Sprintf("Select count(*) from \"%s\" where projectid = %d", tableName, projectId)
+func (r *AnalyticRepository) isDataExist(tableName, state string, projectId int) (bool, error) {
+	var query string
+	if len(state) > 0 {
+		query = fmt.Sprintf("Select count(*) from \"%s\" where projectid = %d and state = '%s'", tableName, projectId, state)
+	} else {
+		query = fmt.Sprintf("Select count(*) from \"%s\" where projectid = %d", tableName, projectId)
+	}
 	res, err := r.db.Raw(query).Rows()
 	defer res.Close()
 	if err != nil {
@@ -44,7 +49,7 @@ func (r *AnalyticRepository) isDataExist(tableName string, projectId int) (bool,
 	return true, nil
 }
 
-func (r *AnalyticRepository) IsAnalyzed(projectName string) (bool, error) {
+func (r *AnalyticRepository) IsAnalyzed(projectName, state string) (bool, error) {
 	tables := []string{"taskStateTime", "activityByTask", "complexityTaskTime", "openTaskTime", "taskPriorityCount"}
 
 	projectId, err := r.returnProjectId(projectName)
@@ -53,7 +58,7 @@ func (r *AnalyticRepository) IsAnalyzed(projectName string) (bool, error) {
 	}
 
 	for _, el := range tables {
-		res, err := r.isDataExist(el, projectId)
+		res, err := r.isDataExist(el, state, projectId)
 		if err != nil {
 			return false, err
 		}
@@ -88,16 +93,17 @@ func (r *AnalyticRepository) ReturnTimeCountOfIssuesInCloseState(projectName str
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("openTaskTime", projectId); ok {
+	if ok, _ := r.isDataExist("openTaskTime", "", projectId); ok {
 		row := r.db.Raw("Select data from \"openTaskTime\" where projectId  = ?", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -205,7 +211,7 @@ func (r *AnalyticRepository) convertTimeWithYears(graph []models.TimeCount) []mo
 	return resultSet
 }
 
-func (r *AnalyticRepository) ReturnPriorityCountOfProjectOpen(projectName string) ([]models.GraphOutput, error) {
+func (r *AnalyticRepository) ReturnPriorityCountOfProjectAll(projectName string) ([]models.GraphOutput, error) {
 	var graph []models.GraphOutput
 	var request []byte
 
@@ -214,16 +220,17 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectOpen(projectName string
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("taskPriorityCount", projectId); ok {
-		row := r.db.Raw("Select data from \"taskPriorityCount\" where projectId  = ? and state = 'Open'", projectId).Row()
+	if ok, _ := r.isDataExist("taskPriorityCount", "All", projectId); ok {
+		row := r.db.Raw("Select data from \"taskPriorityCount\" where projectId  = ? and state = 'All'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -244,16 +251,17 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectClose(projectName strin
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("taskPriorityCount", projectId); ok {
+	if ok, _ := r.isDataExist("taskPriorityCount", "Closed", projectId); ok {
 		row := r.db.Raw("Select data from \"taskPriorityCount\" where projectId  = ? and state = 'Closed'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -274,16 +282,17 @@ func (r *AnalyticRepository) ReturnTimeSpentOnAllTasks(projectName string) ([]mo
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("complexityTaskTime", projectId); ok {
+	if ok, _ := r.isDataExist("complexityTaskTime", "", projectId); ok {
 		row := r.db.Raw("Select data from \"complexityTaskTime\" where projectId  = ?", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -304,16 +313,17 @@ func (r *AnalyticRepository) ReturnCountOpenTaskInDay(projectName string) ([]mod
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("activityByTask", projectId); ok {
+	if ok, _ := r.isDataExist("activityByTask", "Open", projectId); ok {
 		row := r.db.Raw("Select data from \"activityByTask\" where projectId  = ? and state = 'Open'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -334,16 +344,17 @@ func (r *AnalyticRepository) ReturnCountCloseTaskInDay(projectName string) ([]mo
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("activityByTask", projectId); ok {
+	if ok, _ := r.isDataExist("activityByTask", "Closed", projectId); ok {
 		row := r.db.Raw("Select data from \"activityByTask\" where projectId  = ? and state = 'Closed'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -364,16 +375,17 @@ func (r *AnalyticRepository) ReturnCountTimeOfOpenStateInCloseTask(projectName s
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("taskStateTime", projectId); ok {
+	if ok, _ := r.isDataExist("taskStateTime", "Open", projectId); ok {
 		row := r.db.Raw("Select data from \"taskStateTime\" where projectId  = ? and state = 'Open'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -394,16 +406,17 @@ func (r *AnalyticRepository) ReturnCountTimeOfResolvedStateInCloseTask(projectNa
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("taskStateTime", projectId); ok {
+	if ok, _ := r.isDataExist("taskStateTime", "Resolved", projectId); ok {
 		row := r.db.Raw("Select data from \"taskStateTime\" where projectId  = ? and state = 'Resolved'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -424,16 +437,17 @@ func (r *AnalyticRepository) ReturnCountTimeOfReopenedStateInCloseTask(projectNa
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("taskStateTime", projectId); ok {
+	if ok, _ := r.isDataExist("taskStateTime", "Reopened", projectId); ok {
 		row := r.db.Raw("Select data from \"taskStateTime\" where projectId  = ? and state = 'Reopened'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -454,16 +468,17 @@ func (r *AnalyticRepository) ReturnCountTimeOfInProgressStateInCloseTask(project
 		return nil, err
 	}
 
-	if ok, _ := r.isDataExist("taskStateTime", projectId); ok {
+	if ok, _ := r.isDataExist("taskStateTime", "In progress", projectId); ok {
 		row := r.db.Raw("Select data from \"taskStateTime\" where projectId  = ? and state = 'In progress'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
 		} else {
 			err := row.Scan(&request)
 			if err != nil {
-				if err != sql.ErrNoRows {
-					return nil, err
+				if err == sql.ErrNoRows {
+					return nil, nil
 				}
+				return nil, err
 			}
 			if err := json.Unmarshal(request, &graph); err != nil {
 				return nil, err
@@ -620,7 +635,7 @@ func (r *AnalyticRepository) returnTimeSpentOnAllTasks(projectName string) ([]mo
 	return graph, nil
 }
 
-func (r *AnalyticRepository) MakePriorityCountOfProjectOpen(projectName string) error {
+func (r *AnalyticRepository) MakePriorityCountOfProjectAll(projectName string) error {
 	graph, err := r.returnPriorityGraphOpen(projectName)
 	if err != nil {
 		return err
@@ -634,7 +649,7 @@ func (r *AnalyticRepository) MakePriorityCountOfProjectOpen(projectName string) 
 	if res, err := json.Marshal(graph); err != nil {
 		return err
 	} else {
-		if err = r.db.Exec("call addTaskPriorityCount(?, ?, ?, ?)", id, time.Now(), res, "Open").Error; err != nil {
+		if err = r.db.Exec("call addTaskPriorityCount(?, ?, ?, ?)", id, time.Now(), res, "All").Error; err != nil {
 			return err
 		}
 	}
@@ -1257,12 +1272,12 @@ func (r *AnalyticRepository) DeleteComplexityTaskTime(projectName string) error 
 	return nil
 }
 
-func (r *AnalyticRepository) DeleteTaskPriorityCountOpen(projectName string) error {
+func (r *AnalyticRepository) DeleteTaskPriorityCountAll(projectName string) error {
 	id, err := r.returnProjectId(projectName)
 	if err != nil {
 		return err
 	}
-	if err = r.db.Exec("Delete from \"taskPriorityCount\" where projectid=? and state='Open'", id).Error; err != nil {
+	if err = r.db.Exec("Delete from \"taskPriorityCount\" where projectid=? and state='All'", id).Error; err != nil {
 		return err
 	}
 	return nil
