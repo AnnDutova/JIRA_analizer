@@ -62,6 +62,9 @@ func main() {
 	router.HandleFunc("/api/v1/isAnalyzed",
 		controllers.IsAnalyzed).Methods("GET")
 
+	router.HandleFunc("/api/v1/isEmpty",
+		controllers.IsEmpty).Methods("GET")
+
 	router.HandleFunc("/api/v1/compare/{group:[0-9]}",
 		controllers.GetCompareByGraphGroup).Methods("GET")
 
