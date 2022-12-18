@@ -69,7 +69,7 @@ func getForthGraphGroup(w http.ResponseWriter, project string) {
 }
 
 func getFifthGraphGroup(w http.ResponseWriter, project string) {
-	resp, status := services.GetReturnPriorityCountOfProjectOpen(project)
+	resp, status := services.GetReturnPriorityCountOfProjectAll(project)
 	if status > 300 && status < 200 {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}
@@ -144,7 +144,7 @@ func makeForthGraphGroup(w http.ResponseWriter, project string) {
 }
 
 func makeFifthGraphGroup(w http.ResponseWriter, project string) {
-	resp, status := services.MakePriorityCountOfProjectOpen(project)
+	resp, status := services.MakePriorityCountOfProjectAll(project)
 	if status != http.StatusOK {
 		u.RespondAny(w, nil, http.StatusInternalServerError)
 	}

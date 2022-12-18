@@ -3,6 +3,7 @@ package services
 import (
 	"Backend/pkg/repository"
 	u "Backend/pkg/utils"
+	"database/sql"
 	"net/http"
 )
 
@@ -15,21 +16,18 @@ func GetReturnTimeCountOfIssuesInCloseState(project string) (map[string]interfac
 
 	logger.Info("Send ReturnTimeCountOfIssuesInCloseState request")
 
-	logger.Info("Check on emptiness")
-	res, err := repository.DbCon.GetRepository().IsEmpty(project)
+	issues, err := repository.DbCon.GetRepository().ReturnTimeCountOfIssuesInCloseState(project)
 	if err != nil {
-		logger.Error("Something went wrong when check project on emptiness")
-		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend IsEmpty", project), http.StatusBadRequest
-	}
-	if !res {
-		issues, err := repository.DbCon.GetRepository().ReturnTimeCountOfIssuesInCloseState(project)
-		if err != nil {
-			logger.Error("Something went wrong ReturnTimeCountOfIssuesInCloseState")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend GetReturnTimeCountOfIssuesInCloseState", project), http.StatusBadRequest
+		if err == sql.ErrNoRows {
+			resp = u.Message(true, "success",
+				"Jira Analyzer Backend GetReturnTimeCountOfIssuesInCloseState", project)
+			resp["data"] = nil
+			return resp, http.StatusOK
 		}
-
+		logger.Error("Something went wrong ReturnTimeCountOfIssuesInCloseState")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend GetReturnTimeCountOfIssuesInCloseState", project), http.StatusBadRequest
+	} else {
 		resp = u.Message(true, "success",
 			"Jira Analyzer Backend GetReturnTimeCountOfIssuesInCloseState", project)
 		if len(issues) > 0 {
@@ -41,17 +39,12 @@ func GetReturnTimeCountOfIssuesInCloseState(project string) (map[string]interfac
 			data["count"] = category
 			resp["data"] = data
 		} else {
-			resp["data"] = nil
+			data["categories"] = nil
+			data["count"] = nil
+			resp["data"] = data
 		}
 		logger.Info("Get result of ReturnTimeCountOfIssuesInCloseState request")
 		return resp, http.StatusOK
-	} else {
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnTimeCountOfIssuesInCloseState", project)
-		data["empty"] = res
-		resp["data"] = data
-		logger.Info("Get result of ReturnTimeCountOfIssuesInCloseState request")
-		return resp, http.StatusNoContent
 	}
 }
 
@@ -62,93 +55,79 @@ func GetReturnTimeSpentOnAllTasks(project string) (map[string]interface{}, int) 
 	data := make(map[string]interface{}, 0)
 	resp := make(map[string]interface{}, 0)
 
-	res, err := repository.DbCon.GetRepository().IsEmpty(project)
+	logger.Info("Send ReturnTimeSpentOnAllTasks request")
+	issues, err := repository.DbCon.GetRepository().ReturnTimeSpentOnAllTasks(project)
 	if err != nil {
-		logger.Error("Something went wrong when check project on emptiness")
-		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend IsEmpty", project), http.StatusBadRequest
-	}
-	if !res {
-		logger.Info("Send ReturnTimeSpentOnAllTasks request")
-		issues, err := repository.DbCon.GetRepository().ReturnTimeSpentOnAllTasks(project)
-		if err != nil {
-			logger.Error("Something went wrong on ReturnTimeSpentOnAllTasks request")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend GetReturnTimeSpentOnAllTasks", project), http.StatusBadRequest
-		}
-
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnTimeSpentOnAllTasks", project)
-		if len(issues) > 0 {
-			category := make(map[string]interface{}, len(issues))
-			for _, el := range issues {
-				category[el.Title] = el.Count
-			}
-			data["count"] = category
-			data["categories"] = u.SortMinutesCategories(category)
-			resp["data"] = data
-		} else {
+		if err == sql.ErrNoRows {
+			resp = u.Message(true, "success",
+				"Jira Analyzer Backend GetReturnTimeSpentOnAllTasks", project)
 			resp["data"] = nil
+			return resp, http.StatusOK
 		}
-		logger.Info("Get result from GetReturnTimeSpentOnAllTasks request")
-		return resp, http.StatusOK
-	} else {
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnTimeSpentOnAllTasks", project)
-		data["empty"] = res
-		resp["data"] = data
-		logger.Info("Get result from GetReturnTimeSpentOnAllTasks request")
-		return resp, http.StatusNoContent
+		logger.Error("Something went wrong on ReturnTimeSpentOnAllTasks request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend GetReturnTimeSpentOnAllTasks", project), http.StatusBadRequest
 	}
+
+	resp = u.Message(true, "success",
+		"Jira Analyzer Backend GetReturnTimeSpentOnAllTasks", project)
+	if len(issues) > 0 {
+		category := make(map[string]interface{}, len(issues))
+		for _, el := range issues {
+			category[el.Title] = el.Count
+		}
+		data["count"] = category
+		data["categories"] = u.SortMinutesCategories(category)
+		resp["data"] = data
+	} else {
+		data["categories"] = nil
+		data["count"] = nil
+		resp["data"] = data
+	}
+	logger.Info("Get result from GetReturnTimeSpentOnAllTasks request")
+	return resp, http.StatusOK
 }
 
-func GetReturnPriorityCountOfProjectOpen(project string) (map[string]interface{}, int) {
+func GetReturnPriorityCountOfProjectAll(project string) (map[string]interface{}, int) {
 	logger := u.GetLogger()
-	logger.Info("Send GetReturnTimeSpentOnAllTasks request")
+	logger.Info("Send GetReturnPriorityCountOfProjectAll request")
 
 	data := make(map[string]interface{}, 0)
 	resp := make(map[string]interface{}, 0)
 
-	res, err := repository.DbCon.GetRepository().IsEmpty(project)
+	logger.Info("Send ReturnPriorityCountOfProjectAll request")
+	issues, err := repository.DbCon.GetRepository().ReturnPriorityCountOfProjectAll(project)
 	if err != nil {
-		logger.Error("Something went wrong when check project on emptiness")
-		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend IsEmpty", project), http.StatusBadRequest
-	}
-	if !res {
-		logger.Info("Send ReturnPriorityCountOfProjectOpen request")
-		issues, err := repository.DbCon.GetRepository().ReturnPriorityCountOfProjectOpen(project)
-		if err != nil {
-			logger.Error("Something went wrong ReturnPriorityCountOfProjectOpen", err.Error())
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend GetReturnPriorityCountOfProject", project), http.StatusBadRequest
-		}
-
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnPriorityCountOfProject", project)
-		if len(issues) > 0 {
-			category := make([]string, 0, len(issues))
-			names := make(map[string]interface{}, 0)
-			for _, el := range issues {
-				category = append(category, el.Title)
-				names[el.Title] = el.Count
-			}
-			data["count"] = names
-			data["categories"] = category
-			resp["data"] = data
-		} else {
+		if err == sql.ErrNoRows {
+			resp = u.Message(true, "success",
+				"Jira Analyzer Backend ReturnPriorityCountOfProjectAll", project)
 			resp["data"] = nil
+			return resp, http.StatusOK
 		}
-		logger.Info("Get result from GetReturnPriorityCountOfProjectOpen request")
-		return resp, http.StatusOK
-	} else {
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnPriorityCountOfProject", project)
-		data["empty"] = res
-		resp["data"] = data
-		logger.Info("Get result from GetReturnPriorityCountOfProjectOpen request")
-		return resp, http.StatusNoContent
+		logger.Error("Something went wrong ReturnPriorityCountOfProjectAll", err.Error())
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend ReturnPriorityCountOfProjectAll", project), http.StatusBadRequest
 	}
+
+	resp = u.Message(true, "success",
+		"Jira Analyzer Backend GetReturnPriorityCountOfProjectAll", project)
+	if len(issues) > 0 {
+		category := make([]string, 0, len(issues))
+		names := make(map[string]interface{}, 0)
+		for _, el := range issues {
+			category = append(category, el.Title)
+			names[el.Title] = el.Count
+		}
+		data["count"] = names
+		data["categories"] = category
+		resp["data"] = data
+	} else {
+		data["categories"] = nil
+		data["count"] = nil
+		resp["data"] = data
+	}
+	logger.Info("Get result from GetReturnPriorityCountOfProjectAll request")
+	return resp, http.StatusOK
 }
 
 func GetReturnPriorityCountOfProjectClose(project string) (map[string]interface{}, int) {
@@ -158,45 +137,39 @@ func GetReturnPriorityCountOfProjectClose(project string) (map[string]interface{
 	data := make(map[string]interface{}, 0)
 	resp := make(map[string]interface{}, 0)
 
-	res, err := repository.DbCon.GetRepository().IsEmpty(project)
+	logger.Info("Send ReturnPriorityCountOfProjectClose request")
+	issues, err := repository.DbCon.GetRepository().ReturnPriorityCountOfProjectClose(project)
 	if err != nil {
-		logger.Error("Something went wrong when check project on emptiness")
-		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend IsEmpty", project), http.StatusBadRequest
-	}
-	if !res {
-		logger.Info("Send ReturnPriorityCountOfProjectClose request")
-		issues, err := repository.DbCon.GetRepository().ReturnPriorityCountOfProjectClose(project)
-		if err != nil {
-			logger.Error("Something went wrong on ReturnPriorityCountOfProjectClose request")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend GetReturnPriorityCountOfProject", project), http.StatusBadRequest
-		}
-
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnPriorityCountOfProject", project)
-		if len(issues) > 0 {
-			category := make([]string, 0, len(issues))
-			names := make(map[string]interface{}, 0)
-			for _, el := range issues {
-				category = append(category, el.Title)
-				names[el.Title] = el.Count
-			}
-			data["count"] = names
-			data["categories"] = category
-			resp["data"] = data
-		} else {
+		if err == sql.ErrNoRows {
+			resp = u.Message(true, "success",
+				"Jira Analyzer Backend GetReturnPriorityCountOfProjectClose", project)
 			resp["data"] = nil
+			return resp, http.StatusOK
 		}
-		logger.Info("Get result of GetReturnPriorityCountOfProjectClose request")
-		return resp, http.StatusOK
-	} else {
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnPriorityCountOfProject", project)
-		data["empty"] = res
-		resp["data"] = data
-		return resp, http.StatusNoContent
+		logger.Error("Something went wrong on ReturnPriorityCountOfProjectClose request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend GetReturnPriorityCountOfProject", project), http.StatusBadRequest
 	}
+
+	resp = u.Message(true, "success",
+		"Jira Analyzer Backend GetReturnPriorityCountOfProject", project)
+	if len(issues) > 0 {
+		category := make([]string, 0, len(issues))
+		names := make(map[string]interface{}, 0)
+		for _, el := range issues {
+			category = append(category, el.Title)
+			names[el.Title] = el.Count
+		}
+		data["count"] = names
+		data["categories"] = category
+		resp["data"] = data
+	} else {
+		data["categories"] = nil
+		data["count"] = nil
+		resp["data"] = data
+	}
+	logger.Info("Get result of GetReturnPriorityCountOfProjectClose request")
+	return resp, http.StatusOK
 }
 
 func GetReturnTaskStateTime(project string) (map[string]interface{}, int) {
@@ -211,105 +184,98 @@ func GetReturnTaskStateTime(project string) (map[string]interface{}, int) {
 	data := make(map[string]interface{}, 0)
 	resp := make(map[string]interface{}, 0)
 
-	res, err := repository.DbCon.GetRepository().IsEmpty(project)
+	logger.Info("Send ReturnCountTimeOfOpenStateInCloseTask request")
+	openTasks, err := repository.DbCon.GetRepository().ReturnCountTimeOfOpenStateInCloseTask(project)
 	if err != nil {
-		logger.Error("Something went wrong when check project on emptiness")
-		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend IsEmpty", project), http.StatusBadRequest
-	}
-	if !res {
-		logger.Info("Send ReturnCountTimeOfOpenStateInCloseTask request")
-		openTasks, err := repository.DbCon.GetRepository().ReturnCountTimeOfOpenStateInCloseTask(project)
-		if err != nil {
-			logger.Error("Something went wrong on ReturnCountTimeOfOpenStateInCloseTask request")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend GetReturnCountTimeOfOpenStateInCloseTask", project), http.StatusBadRequest
-		}
-
-		logger.Info("Send ReturnCountTimeOfResolvedStateInCloseTask request")
-		resolveTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfResolvedStateInCloseTask(project)
-		if err != nil {
-			logger.Error("Something went wrong on ReturnCountTimeOfResolvedStateInCloseTask request")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend ReturnCountTimeOfResolvedStateInCloseTask", project), http.StatusBadRequest
-		}
-
-		logger.Info("Send ReturnCountTimeOfReopenedStateInCloseTask request")
-		reopenedTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfReopenedStateInCloseTask(project)
-		if err != nil {
-			logger.Error("Something went wrong on ReturnCountTimeOfReopenedStateInCloseTask request")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend ReturnCountTimeOfReopenedStateInCloseTask", project), http.StatusBadRequest
-		}
-
-		logger.Info("Send ReturnCountTimeOfInProgressStateInCloseTask request")
-		inProgressTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfInProgressStateInCloseTask(project)
-		if err != nil {
-			logger.Error("Something went wrong on ReturnCountTimeOfInProgressStateInCloseTask request")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend ReturnCountTimeOfInProgressStateInCloseTask", project), http.StatusBadRequest
-		}
-
-		resp = u.Message(true, "success",
-			"Jira Analyzer REST API GetReturnTaskStateTime", project)
-
-		if len(openTasks) > 0 {
-			for _, el := range openTasks {
-				open[el.Title] = el.Count
-			}
-			data["open"] = open
-			category["open"] = u.SortCategories(open)
-		} else {
-			data["open"] = nil
-			category["open"] = nil
-		}
-		if len(resolveTask) > 0 {
-			for _, el := range resolveTask {
-				resolve[el.Title] = el.Count
-			}
-			data["resolve"] = resolve
-			category["resolve"] = u.SortCategories(resolve)
-		} else {
-			data["resolve"] = nil
-			category["resolve"] = nil
-		}
-		if len(reopenedTask) > 0 {
-			for _, el := range reopenedTask {
-				reopen[el.Title] = el.Count
-			}
-			data["reopen"] = reopen
-			category["reopen"] = u.SortCategories(reopen)
-		} else {
-			data["reopen"] = nil
-			category["reopen"] = nil
-		}
-		if len(inProgressTask) > 0 {
-			for _, el := range inProgressTask {
-				progress[el.Title] = el.Count
-			}
-			data["progress"] = progress
-			category["progress"] = u.SortCategories(progress)
-		} else {
-			data["progress"] = nil
-			category["progress"] = nil
-		}
-
-		if len(openTasks) > 0 || len(reopenedTask) > 0 || len(resolveTask) > 0 || len(inProgressTask) > 0 {
-			data["categories"] = category
-			resp["data"] = data
-		} else if len(openTasks) == 0 && len(reopenedTask) == 0 && len(resolveTask) > 0 && len(inProgressTask) > 0 {
+		if err == sql.ErrNoRows {
+			resp = u.Message(true, "success",
+				"Jira Analyzer Backend GetReturnTaskStateTime", project)
 			resp["data"] = nil
+			return resp, http.StatusOK
 		}
-		logger.Info("Get result of GetReturnTaskStateTime request")
-		return resp, http.StatusOK
-	} else {
-		resp = u.Message(true, "success",
-			"Jira Analyzer REST API GetReturnTaskStateTime", project)
-		data["empty"] = res
-		resp["data"] = data
-		logger.Info("Get empty result of GetReturnTaskStateTime request")
-		return resp, http.StatusNoContent
+		logger.Error("Something went wrong on ReturnCountTimeOfOpenStateInCloseTask request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend GetReturnCountTimeOfOpenStateInCloseTask", project), http.StatusBadRequest
 	}
+
+	logger.Info("Send ReturnCountTimeOfResolvedStateInCloseTask request")
+	resolveTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfResolvedStateInCloseTask(project)
+	if err != nil {
+		logger.Error("Something went wrong on ReturnCountTimeOfResolvedStateInCloseTask request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend ReturnCountTimeOfResolvedStateInCloseTask", project), http.StatusBadRequest
+	}
+
+	logger.Info("Send ReturnCountTimeOfReopenedStateInCloseTask request")
+	reopenedTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfReopenedStateInCloseTask(project)
+	if err != nil {
+		logger.Error("Something went wrong on ReturnCountTimeOfReopenedStateInCloseTask request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend ReturnCountTimeOfReopenedStateInCloseTask", project), http.StatusBadRequest
+	}
+
+	logger.Info("Send ReturnCountTimeOfInProgressStateInCloseTask request")
+	inProgressTask, err := repository.DbCon.GetRepository().ReturnCountTimeOfInProgressStateInCloseTask(project)
+	if err != nil {
+		logger.Error("Something went wrong on ReturnCountTimeOfInProgressStateInCloseTask request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend ReturnCountTimeOfInProgressStateInCloseTask", project), http.StatusBadRequest
+	}
+
+	resp = u.Message(true, "success",
+		"Jira Analyzer REST API GetReturnTaskStateTime", project)
+
+	if len(openTasks) > 0 {
+		for _, el := range openTasks {
+			open[el.Title] = el.Count
+		}
+		data["open"] = open
+		category["open"] = u.SortCategories(open)
+	} else {
+		data["open"] = nil
+		category["open"] = nil
+	}
+	if len(resolveTask) > 0 {
+		for _, el := range resolveTask {
+			resolve[el.Title] = el.Count
+		}
+		data["resolve"] = resolve
+		category["resolve"] = u.SortCategories(resolve)
+	} else {
+		data["resolve"] = nil
+		category["resolve"] = nil
+	}
+	if len(reopenedTask) > 0 {
+		for _, el := range reopenedTask {
+			reopen[el.Title] = el.Count
+		}
+		data["reopen"] = reopen
+		category["reopen"] = u.SortCategories(reopen)
+	} else {
+		data["reopen"] = nil
+		category["reopen"] = nil
+	}
+	if len(inProgressTask) > 0 {
+		for _, el := range inProgressTask {
+			progress[el.Title] = el.Count
+		}
+		data["progress"] = progress
+		category["progress"] = u.SortCategories(progress)
+	} else {
+		data["progress"] = nil
+		category["progress"] = nil
+	}
+
+	if len(openTasks) > 0 || len(reopenedTask) > 0 || len(resolveTask) > 0 || len(inProgressTask) > 0 {
+		data["categories"] = category
+		resp["data"] = data
+	} else if len(openTasks) == 0 && len(reopenedTask) == 0 && len(resolveTask) > 0 && len(inProgressTask) > 0 {
+		data["categories"] = nil
+		data["count"] = nil
+		resp["data"] = data
+	}
+	logger.Info("Get result of GetReturnTaskStateTime request")
+	return resp, http.StatusOK
 }
 
 func GetReturnActivityByTask(project string) (map[string]interface{}, int) {
@@ -323,89 +289,83 @@ func GetReturnActivityByTask(project string) (map[string]interface{}, int) {
 	all := make(map[string]interface{}, 0)
 	resp := make(map[string]interface{}, 0)
 
-	res, err := repository.DbCon.GetRepository().IsEmpty(project)
+	logger.Info("Send ReturnCountCloseTaskInDay request")
+	closeTasks, err := repository.DbCon.GetRepository().ReturnCountCloseTaskInDay(project)
 	if err != nil {
-		logger.Error("Something went wrong when check project on emptiness")
-		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend IsEmpty", project), http.StatusBadRequest
-	}
-	if !res {
-		logger.Info("Send ReturnCountCloseTaskInDay request")
-		closeTasks, err := repository.DbCon.GetRepository().ReturnCountCloseTaskInDay(project)
-		if err != nil {
-			logger.Error("Something went wrong on ReturnCountCloseTaskInDay request")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend ReturnCountCloseTaskInDay", project), http.StatusBadRequest
-		}
-		logger.Info("Send ReturnCountOpenTaskInDay request")
-		openTasks, err := repository.DbCon.GetRepository().ReturnCountOpenTaskInDay(project)
-		if err != nil {
-			logger.Error("Something went wrong on ReturnCountOpenTaskInDay request")
-			return u.Message(false, err.Error(),
-				"Jira Analyzer Backend ReturnCountOpenTaskInDay", project), http.StatusBadRequest
-		}
-
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnActivityByTask", project)
-		if len(openTasks) > 0 {
-			for _, el := range openTasks {
-				open[el.Title] = el.Count
-			}
-			openDates, err := u.SortDatesForActivityGraph(open)
-			if err != nil {
-				return u.Message(false, err.Error(),
-					"Jira Analyzer Backend GetReturnActivityByTask. Fail on SortDatesForActivityGraph",
-					"Dates for open tasks"), http.StatusBadRequest
-			}
-			data["open"] = open
-			category["open"] = openDates
-		} else {
-			data["open"] = nil
-			category["open"] = nil
-		}
-		if len(closeTasks) > 0 {
-			for _, el := range closeTasks {
-				closed[el.Title] = el.Count
-			}
-			closeDates, err := u.SortDatesForActivityGraph(closed)
-			if err != nil {
-				return u.Message(false, err.Error(),
-					"Jira Analyzer Backend GetReturnActivityByTask. Fail on SortDatesForActivityGraph",
-					"Dates for close tasks"), http.StatusBadRequest
-			}
-			data["close"] = closed
-			category["close"] = closeDates
-		} else {
-			data["close"] = nil
-			category["close"] = nil
-		}
-		all = u.JoinToMap(openTasks, closeTasks, all)
-		if len(all) > 0 {
-			allCategories, err := u.SortDatesForActivityGraph(all)
-			if err != nil {
-				return u.Message(false, err.Error(),
-					"Jira Analyzer Backend GetReturnActivityByTask. Fail on SortDatesForActivityGraph",
-					"Dates for all categories"), http.StatusBadRequest
-			}
-			category["all"] = allCategories
-		} else {
-			category["all"] = nil
-		}
-		if len(openTasks) > 0 || len(closeTasks) > 0 {
-			data["categories"] = category
-			resp["data"] = data
-		} else if len(openTasks) == 0 && len(closeTasks) == 0 {
+		if err == sql.ErrNoRows {
+			resp = u.Message(true, "success",
+				"Jira Analyzer Backend GetReturnActivityByTask", project)
 			resp["data"] = nil
+			return resp, http.StatusOK
 		}
-		logger.Info("Get result of GetReturnActivityByTask request")
-		return resp, http.StatusOK
-	} else {
-		resp = u.Message(true, "success",
-			"Jira Analyzer Backend GetReturnActivityByTask", project)
-		data["empty"] = res
-		resp["data"] = data
-		return resp, http.StatusNoContent
+		logger.Error("Something went wrong on ReturnCountCloseTaskInDay request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend ReturnCountCloseTaskInDay", project), http.StatusBadRequest
 	}
+	logger.Info("Send ReturnCountOpenTaskInDay request")
+	openTasks, err := repository.DbCon.GetRepository().ReturnCountOpenTaskInDay(project)
+	if err != nil {
+		logger.Error("Something went wrong on ReturnCountOpenTaskInDay request")
+		return u.Message(false, err.Error(),
+			"Jira Analyzer Backend ReturnCountOpenTaskInDay", project), http.StatusBadRequest
+	}
+
+	resp = u.Message(true, "success",
+		"Jira Analyzer Backend GetReturnActivityByTask", project)
+	if len(openTasks) > 0 {
+		for _, el := range openTasks {
+			open[el.Title] = el.Count
+		}
+		openDates, err := u.SortDatesForActivityGraph(open)
+		if err != nil {
+			return u.Message(false, err.Error(),
+				"Jira Analyzer Backend GetReturnActivityByTask. Fail on SortDatesForActivityGraph",
+				"Dates for open tasks"), http.StatusBadRequest
+		}
+		data["open"] = open
+		category["open"] = openDates
+	} else {
+		data["open"] = nil
+		category["open"] = nil
+	}
+	if len(closeTasks) > 0 {
+		for _, el := range closeTasks {
+			closed[el.Title] = el.Count
+		}
+		closeDates, err := u.SortDatesForActivityGraph(closed)
+		if err != nil {
+			return u.Message(false, err.Error(),
+				"Jira Analyzer Backend GetReturnActivityByTask. Fail on SortDatesForActivityGraph",
+				"Dates for close tasks"), http.StatusBadRequest
+		}
+		data["close"] = closed
+		category["close"] = closeDates
+	} else {
+		data["close"] = nil
+		category["close"] = nil
+	}
+	all = u.JoinToMap(openTasks, closeTasks, all)
+	if len(all) > 0 {
+		allCategories, err := u.SortDatesForActivityGraph(all)
+		if err != nil {
+			return u.Message(false, err.Error(),
+				"Jira Analyzer Backend GetReturnActivityByTask. Fail on SortDatesForActivityGraph",
+				"Dates for all categories"), http.StatusBadRequest
+		}
+		category["all"] = allCategories
+	} else {
+		category["all"] = nil
+	}
+	if len(openTasks) > 0 || len(closeTasks) > 0 {
+		data["categories"] = category
+		resp["data"] = data
+	} else if len(openTasks) == 0 && len(closeTasks) == 0 {
+		data["categories"] = nil
+		data["count"] = nil
+		resp["data"] = data
+	}
+	logger.Info("Get result of GetReturnActivityByTask request")
+	return resp, http.StatusOK
 }
 
 func MakeTimeCountOfIssuesInCloseState(project string) (map[string]interface{}, int) {
@@ -510,12 +470,12 @@ func MakeTimeSpentOnAllTasks(project string) (map[string]interface{}, int) {
 	return resp, http.StatusOK
 }
 
-func MakePriorityCountOfProjectOpen(project string) (map[string]interface{}, int) {
+func MakePriorityCountOfProjectAll(project string) (map[string]interface{}, int) {
 	logger := u.GetLogger()
 	logger.Info("Send GetReturnTimeSpentOnAllTasks request")
 
 	logger.Info("Send MakePriorityCountOfProjectOpen request")
-	err := repository.DbCon.GetRepository().MakePriorityCountOfProjectOpen(project)
+	err := repository.DbCon.GetRepository().MakePriorityCountOfProjectAll(project)
 	if err != nil {
 		logger.Error("Something went wrong on MakePriorityCountOfProjectOpen request")
 		return u.Message(false, err.Error(),
@@ -549,7 +509,7 @@ func IsAnalyzedGraph(project string) (map[string]interface{}, int) {
 	logger.Info("Send IsAnalyzedGraph request")
 
 	logger.Info("Send IsAnalyzed request")
-	ok, err := repository.DbCon.GetRepository().IsAnalyzed(project)
+	ok, err := repository.DbCon.GetRepository().IsAnalyzed(project, "")
 	if err != nil {
 		logger.Error("Something went wrong on IsAnalyzed request")
 		return u.Message(false, err.Error(),
@@ -656,12 +616,12 @@ func DeleteGraphsByProject(project string) (map[string]interface{}, int) {
 			"Jira Analyzer Backend DeleteComplexityTaskTime", project), http.StatusBadRequest
 	}
 
-	logger.Info("Send DeleteTaskPriorityCountOpen request")
-	err = repository.DbCon.GetRepository().DeleteTaskPriorityCountOpen(project)
+	logger.Info("Send DeleteTaskPriorityCountAll request")
+	err = repository.DbCon.GetRepository().DeleteTaskPriorityCountAll(project)
 	if err != nil {
-		logger.Error("Something went wrong on DeleteTaskPriorityCountOpen request")
+		logger.Error("Something went wrong on DeleteTaskPriorityCountAll request")
 		return u.Message(false, err.Error(),
-			"Jira Analyzer Backend DeleteTaskPriorityCountOpen", project), http.StatusBadRequest
+			"Jira Analyzer Backend DeleteTaskPriorityCountAll", project), http.StatusBadRequest
 	}
 
 	logger.Info("Send DeleteTaskPriorityCountClose request")
