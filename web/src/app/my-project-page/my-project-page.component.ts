@@ -12,14 +12,19 @@ export class MyProjectPageComponent implements OnInit {
   myProjects: IProj[] = []
   checked: Map<any, any> = new Map();
   loading = false
+  noProjects: boolean = false
+  inited: boolean = false
+
   constructor(private myProjectService: DatabaseProjectServices) { }
 
   ngOnInit(): void {
     this.loading = true
     this.myProjectService.getAll().subscribe(projects => {
+      this.noProjects = projects.data.length == 0;
       console.log(projects)
       this.myProjects = projects.data
       this.loading = false
+      this.inited = true
     }, error => {
       if (error.status == 0){
         alert("Unable to connect to backend")

@@ -13,14 +13,18 @@ import {CheckedProject} from "../models/check-element.model";
 export class ComparePageComponent implements OnInit {
   projects: IProj[] = []
   checked: Map<any, any> = new Map();
+  noProjects: boolean = false
+  inited: boolean = false
 
   constructor(private myProjectService: DatabaseProjectServices, private router: Router) {}
 
 
   ngOnInit(): void {
     this.myProjectService.getAll().subscribe(projects => {
+      this.noProjects = projects.data.length == 0;
       console.log(projects)
       this.projects = projects.data
+      this.inited = true
     },
       error => {
         if (error.status == 0){
