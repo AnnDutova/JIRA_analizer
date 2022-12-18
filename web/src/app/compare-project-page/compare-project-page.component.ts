@@ -46,6 +46,8 @@ export class CompareProjectPageComponent implements OnInit {
       })
     }
 
+    var colors = ["blue", "green", "red", "orange", "purple", "black"]
+
     var openTaskElem = document.getElementById('open-task') as HTMLElement;
     this.dbProjectService.getComplitedGraph("1", this.projects).subscribe(info => {
       if (info.data["count"] == null) {
@@ -62,6 +64,7 @@ export class CompareProjectPageComponent implements OnInit {
           }
           openTaskChartOptions.series?.push({ name: this.projects[j],
             type: "column",
+            color: colors[j],
             data: count})
           this.openTaskChart = new Chart(openTaskChartOptions)
         }
@@ -88,7 +91,8 @@ export class CompareProjectPageComponent implements OnInit {
             count.push(info.data["open"][info.data["categories"]["open"][i]][j])
           }
           openStateChartOptions.series?.push({ name: this.projects[j],
-            type: "areaspline",
+            type: "spline",
+            color: colors[j],
             data: count})
           this.openStateChart = new Chart(openStateChartOptions)
         }
@@ -107,7 +111,8 @@ export class CompareProjectPageComponent implements OnInit {
             countResolve.push(info.data["resolve"][info.data["categories"]["resolve"][i]][j])
           }
           resolveStateChartOptions.series?.push({ name: this.projects[j],
-            type: "areaspline",
+            type: "spline",
+            color: colors[j],
             data: countResolve})
           this.resolveStateChart = new Chart(resolveStateChartOptions)
         }
@@ -129,7 +134,8 @@ export class CompareProjectPageComponent implements OnInit {
             countProgress.push(info.data["progress"][info.data["categories"]["progress"][i]][j])
           }
           progressStateChartOptions.series?.push({ name: this.projects[j],
-            type: "areaspline",
+            type: "spline",
+            color: colors[j],
             data: countProgress})
           this.progressStateChart = new Chart(progressStateChartOptions)
         }
@@ -150,7 +156,8 @@ export class CompareProjectPageComponent implements OnInit {
             countReopen.push(info.data["reopen"][info.data["categories"]["reopen"][i]][j])
           }
           reopenStateChartOptions.series?.push({ name: this.projects[j],
-            type: "areaspline",
+            type: "spline",
+            color: colors[j],
             data: countReopen})
           this.reopenStateChart = new Chart(reopenStateChartOptions)
         }
@@ -184,10 +191,12 @@ export class CompareProjectPageComponent implements OnInit {
             countClose.push(info.data["close"][info.data["categories"]["close"][i]][j])
           }
           activityByTaskChartOptions.series?.push({ name: this.projects[j] + " open",
-            type: "areaspline",
+            type: "spline",
+            color: colors[j],
             data: countOpen})
           activityByTaskChartOptions.series?.push({ name: this.projects[j] + " close",
-            type: "areaspline",
+            type: "spline",
+            color: colors[j + this.projects.length],
             data: countClose})
           this.activityByTaskChart = new Chart(activityByTaskChartOptions)
         }
@@ -210,6 +219,7 @@ export class CompareProjectPageComponent implements OnInit {
           }
           complexityTaskChartOptions.series?.push({ name: this.projects[j],
             type: "column",
+            color: colors[j],
             data: count})
           this.complexityTaskChart = new Chart(complexityTaskChartOptions)
         }
@@ -232,6 +242,7 @@ export class CompareProjectPageComponent implements OnInit {
           }
           taskPriorityChartOptions.series?.push({ name: this.projects[j],
             type: "column",
+            color: colors[j],
             data: count})
           this.taskPriorityChart = new Chart(taskPriorityChartOptions)
         }
@@ -254,6 +265,7 @@ export class CompareProjectPageComponent implements OnInit {
           }
           closeTaskPriorityChartOptions.series?.push({ name: this.projects[j],
             type: "column",
+            color: colors[j],
             data: count})
           this.closeTaskPriorityChart = new Chart(closeTaskPriorityChartOptions)
         }

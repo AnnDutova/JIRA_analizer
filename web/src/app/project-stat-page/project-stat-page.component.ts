@@ -46,19 +46,25 @@ export class ProjectStatPageComponent implements OnInit {
         openTaskElem.remove()
         openTaskTitle.remove()
       } else {
-        // @ts-ignore
-        openTaskChartOptions.xAxis["categories"] = info.data["categories"]
-        var count = []
-        for (let i = 0; i < info.data["categories"].length; i++) {
+        if (info.data["categories"] == null) {
+          openTaskElem.remove()
+          openTaskTitle.textContent = "Гистограмма, отражающая время, которое задачи провели в открытом состоянии - " +
+            "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
+        } else{
           // @ts-ignore
-          count.push(info.data["count"][info.data["categories"][i]])
+          openTaskChartOptions.xAxis["categories"] = info.data["categories"]
+          var count = []
+          for (let i = 0; i < info.data["categories"].length; i++) {
+            // @ts-ignore
+            count.push(info.data["count"][info.data["categories"][i]])
+          }
+          openTaskChartOptions.series?.push({
+            name: this.projects[0],
+            type: "column",
+            data: count
+          })
+          this.openTaskChart = new Chart(openTaskChartOptions)
         }
-        openTaskChartOptions.series?.push({
-          name: this.projects[0],
-          type: "column",
-          data: count
-        })
-        this.openTaskChart = new Chart(openTaskChartOptions)
       }
     })
 
@@ -100,7 +106,7 @@ export class ProjectStatPageComponent implements OnInit {
           }
           openStateChartOptions.series?.push({
             name: this.projects[0],
-            type: "areaspline",
+            type: "spline",
             data: count
           })
           this.openStateChart = new Chart(openStateChartOptions)
@@ -119,7 +125,7 @@ export class ProjectStatPageComponent implements OnInit {
           }
           resolveStateChartOptions.series?.push({
             name: this.projects[0],
-            type: "areaspline",
+            type: "spline",
             data: countResolve
           })
           this.resolveStateChart = new Chart(resolveStateChartOptions)
@@ -139,7 +145,7 @@ export class ProjectStatPageComponent implements OnInit {
           }
           progressStateChartOptions.series?.push({
             name: this.projects[0],
-            type: "areaspline",
+            type: "spline",
             data: countProgress
           })
           this.progressStateChart = new Chart(progressStateChartOptions)
@@ -160,7 +166,7 @@ export class ProjectStatPageComponent implements OnInit {
           }
           reopenStateChartOptions.series?.push({
             name: this.projects[0],
-            type: "areaspline",
+            type: "spline",
             data: countReopen
           })
           this.reopenStateChart = new Chart(reopenStateChartOptions)
@@ -197,12 +203,12 @@ export class ProjectStatPageComponent implements OnInit {
           }
           activityByTaskChartOptions.series?.push({
             name: this.projects[0] + " open",
-            type: "areaspline",
+            type: "spline",
             data: countOpen
           })
           activityByTaskChartOptions.series?.push({
             name: this.projects[0] + " close",
-            type: "areaspline",
+            type: "spline",
             data: countClose
           })
           this.activityByTaskChart = new Chart(activityByTaskChartOptions)
@@ -219,7 +225,7 @@ export class ProjectStatPageComponent implements OnInit {
           complexityTaskTitle.remove()
         }
         else {
-          if (info.data == null) {
+          if (info.data["categories"] == null) {
             complexityTaskElem.remove()
             complexityTaskTitle.textContent = "График сложности задач - " +
               "аналитическая задача недоступна, проект не располагает данными для ее выполнения"
@@ -281,7 +287,7 @@ export class ProjectStatPageComponent implements OnInit {
           closeTaskPriorityTitle.remove()
         }
         else {
-          if (info.data == null) {
+          if (info.data["categories"] == null) {
             closeTaskPriorityElem.remove()
             closeTaskPriorityTitle.textContent = "График, отражающий приоритетность закрытых задач - " +
               "аналитическая задача недоступна, проект не располагает данными для ее выполнения"

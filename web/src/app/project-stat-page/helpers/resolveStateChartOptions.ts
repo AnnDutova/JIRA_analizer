@@ -1,16 +1,6 @@
 import { Options } from 'highcharts';
 
 export const resolveStateChartOptions: Options = {
-  chart: {
-    styledMode: true,
-  },
-  plotOptions: {
-    series: {
-      marker: {
-        enabled: true,
-      },
-    },
-  },
   legend: {
     enabled: true,
   },
@@ -29,27 +19,6 @@ export const resolveStateChartOptions: Options = {
 
     categories: [],
   },
-
-  defs: {
-    gradient0: {
-      tagName: 'linearGradient',
-      id: 'gradient-0',
-      x1: 0,
-      y1: 0,
-      x2: 0,
-      y2: 1,
-      children: [
-        {
-          tagName: 'stop',
-          offset: 0,
-        },
-        {
-          tagName: 'stop',
-          offset: 1,
-        },
-      ],
-    },
-  } as any,
 
   series: [],
 };
