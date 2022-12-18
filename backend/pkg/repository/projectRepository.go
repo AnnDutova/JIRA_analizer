@@ -135,7 +135,7 @@ func (r *ProjectRepository) ReturnProjectAnalytic(id string) (*models.ProjectAna
 	if !averageTime.Valid {
 		ProjectAnalytic.AverageTime = 0
 	} else {
-		ProjectAnalytic.AverageTime = averageTime.Float64
+		ProjectAnalytic.AverageTime = int(averageTime.Float64)
 	}
 
 	if err != nil {
@@ -150,7 +150,7 @@ func (r *ProjectRepository) ReturnProjectAnalytic(id string) (*models.ProjectAna
 	if !averageIssuesCount.Valid {
 		ProjectAnalytic.AverageIssuesCount = 0
 	} else {
-		ProjectAnalytic.AverageIssuesCount = averageIssuesCount.Float64
+		ProjectAnalytic.AverageIssuesCount = int(averageIssuesCount.Float64)
 	}
 
 	if err != nil {

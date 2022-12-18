@@ -269,9 +269,12 @@ func GetReturnTaskStateTime(project string) (map[string]interface{}, int) {
 	if len(openTasks) > 0 || len(reopenedTask) > 0 || len(resolveTask) > 0 || len(inProgressTask) > 0 {
 		data["categories"] = category
 		resp["data"] = data
-	} else if len(openTasks) == 0 && len(reopenedTask) == 0 && len(resolveTask) > 0 && len(inProgressTask) > 0 {
+	} else if len(openTasks) == 0 && len(reopenedTask) == 0 && len(resolveTask) == 0 && len(inProgressTask) == 0 {
 		data["categories"] = nil
-		data["count"] = nil
+		data["open"] = nil
+		data["reopen"] = nil
+		data["resolve"] = nil
+		data["progress"] = nil
 		resp["data"] = data
 	}
 	logger.Info("Get result of GetReturnTaskStateTime request")

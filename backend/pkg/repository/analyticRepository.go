@@ -636,7 +636,7 @@ func (r *AnalyticRepository) returnTimeSpentOnAllTasks(projectName string) ([]mo
 }
 
 func (r *AnalyticRepository) MakePriorityCountOfProjectAll(projectName string) error {
-	graph, err := r.returnPriorityGraphOpen(projectName)
+	graph, err := r.returnPriorityGraphAll(projectName)
 	if err != nil {
 		return err
 	}
@@ -656,10 +656,10 @@ func (r *AnalyticRepository) MakePriorityCountOfProjectAll(projectName string) e
 	return nil
 }
 
-func (r *AnalyticRepository) returnPriorityGraphOpen(projectName string) ([]models.GraphOutput, error) {
+func (r *AnalyticRepository) returnPriorityGraphAll(projectName string) ([]models.GraphOutput, error) {
 	var graph []models.GraphOutput
 	rows, err := r.db.Raw("Select i.priority, "+" count(i.priority) as count from issues as i "+
-		" left join project on i.projectId = project.id where project.title = ? and i.status = 'Open' "+
+		" left join project on i.projectId = project.id where project.title = ? "+
 		" group by priority order by count desc", projectName).Rows()
 	defer rows.Close()
 	if err != nil {
