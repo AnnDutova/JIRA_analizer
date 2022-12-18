@@ -88,7 +88,7 @@ func (r *AnalyticRepository) ReturnTimeCountOfIssuesInCloseState(projectName str
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("openTaskTime", projectId); ok {
+	if ok, _ := r.isDataExist("openTaskTime", projectId); ok {
 		row := r.db.Raw("Select data from \"openTaskTime\" where projectId  = ?", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -104,10 +104,9 @@ func (r *AnalyticRepository) ReturnTimeCountOfIssuesInCloseState(projectName str
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) returnProjectId(projectName string) (int, error) {
@@ -215,7 +214,7 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectOpen(projectName string
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("taskPriorityCount", projectId); ok {
+	if ok, _ := r.isDataExist("taskPriorityCount", projectId); ok {
 		row := r.db.Raw("Select data from \"taskPriorityCount\" where projectId  = ? and state = 'Open'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -231,10 +230,9 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectOpen(projectName string
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) ReturnPriorityCountOfProjectClose(projectName string) ([]models.GraphOutput, error) {
@@ -246,7 +244,7 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectClose(projectName strin
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("taskPriorityCount", projectId); ok {
+	if ok, _ := r.isDataExist("taskPriorityCount", projectId); ok {
 		row := r.db.Raw("Select data from \"taskPriorityCount\" where projectId  = ? and state = 'Closed'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -262,10 +260,9 @@ func (r *AnalyticRepository) ReturnPriorityCountOfProjectClose(projectName strin
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) ReturnTimeSpentOnAllTasks(projectName string) ([]models.GraphOutput, error) {
@@ -277,7 +274,7 @@ func (r *AnalyticRepository) ReturnTimeSpentOnAllTasks(projectName string) ([]mo
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("complexityTaskTime", projectId); ok {
+	if ok, _ := r.isDataExist("complexityTaskTime", projectId); ok {
 		row := r.db.Raw("Select data from \"complexityTaskTime\" where projectId  = ?", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -293,10 +290,9 @@ func (r *AnalyticRepository) ReturnTimeSpentOnAllTasks(projectName string) ([]mo
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) ReturnCountOpenTaskInDay(projectName string) ([]models.GraphOutput, error) {
@@ -308,7 +304,7 @@ func (r *AnalyticRepository) ReturnCountOpenTaskInDay(projectName string) ([]mod
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("activityByTask", projectId); ok {
+	if ok, _ := r.isDataExist("activityByTask", projectId); ok {
 		row := r.db.Raw("Select data from \"activityByTask\" where projectId  = ? and state = 'Open'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -324,10 +320,9 @@ func (r *AnalyticRepository) ReturnCountOpenTaskInDay(projectName string) ([]mod
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) ReturnCountCloseTaskInDay(projectName string) ([]models.GraphOutput, error) {
@@ -339,7 +334,7 @@ func (r *AnalyticRepository) ReturnCountCloseTaskInDay(projectName string) ([]mo
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("activityByTask", projectId); ok {
+	if ok, _ := r.isDataExist("activityByTask", projectId); ok {
 		row := r.db.Raw("Select data from \"activityByTask\" where projectId  = ? and state = 'Closed'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -355,10 +350,9 @@ func (r *AnalyticRepository) ReturnCountCloseTaskInDay(projectName string) ([]mo
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) ReturnCountTimeOfOpenStateInCloseTask(projectName string) ([]models.GraphOutput, error) {
@@ -370,7 +364,7 @@ func (r *AnalyticRepository) ReturnCountTimeOfOpenStateInCloseTask(projectName s
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("taskStateTime", projectId); ok {
+	if ok, _ := r.isDataExist("taskStateTime", projectId); ok {
 		row := r.db.Raw("Select data from \"taskStateTime\" where projectId  = ? and state = 'Open'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -386,10 +380,9 @@ func (r *AnalyticRepository) ReturnCountTimeOfOpenStateInCloseTask(projectName s
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) ReturnCountTimeOfResolvedStateInCloseTask(projectName string) ([]models.GraphOutput, error) {
@@ -401,7 +394,7 @@ func (r *AnalyticRepository) ReturnCountTimeOfResolvedStateInCloseTask(projectNa
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("taskStateTime", projectId); ok {
+	if ok, _ := r.isDataExist("taskStateTime", projectId); ok {
 		row := r.db.Raw("Select data from \"taskStateTime\" where projectId  = ? and state = 'Resolved'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -417,10 +410,9 @@ func (r *AnalyticRepository) ReturnCountTimeOfResolvedStateInCloseTask(projectNa
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) ReturnCountTimeOfReopenedStateInCloseTask(projectName string) ([]models.GraphOutput, error) {
@@ -432,7 +424,7 @@ func (r *AnalyticRepository) ReturnCountTimeOfReopenedStateInCloseTask(projectNa
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("taskStateTime", projectId); ok {
+	if ok, _ := r.isDataExist("taskStateTime", projectId); ok {
 		row := r.db.Raw("Select data from \"taskStateTime\" where projectId  = ? and state = 'Reopened'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -448,10 +440,9 @@ func (r *AnalyticRepository) ReturnCountTimeOfReopenedStateInCloseTask(projectNa
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 func (r *AnalyticRepository) ReturnCountTimeOfInProgressStateInCloseTask(projectName string) ([]models.GraphOutput, error) {
@@ -463,7 +454,7 @@ func (r *AnalyticRepository) ReturnCountTimeOfInProgressStateInCloseTask(project
 		return nil, err
 	}
 
-	if ok, err := r.isDataExist("taskStateTime", projectId); ok {
+	if ok, _ := r.isDataExist("taskStateTime", projectId); ok {
 		row := r.db.Raw("Select data from \"taskStateTime\" where projectId  = ? and state = 'In progress'", projectId).Row()
 		if row.Err() != nil {
 			return nil, row.Err()
@@ -479,10 +470,9 @@ func (r *AnalyticRepository) ReturnCountTimeOfInProgressStateInCloseTask(project
 			}
 			return graph, nil
 		}
-	} else if err == sql.ErrNoRows {
-		return nil, nil
+	} else {
+		return nil, sql.ErrNoRows
 	}
-	return nil, err
 }
 
 //make
