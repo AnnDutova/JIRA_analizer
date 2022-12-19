@@ -12,12 +12,17 @@ export const progressStateChartOptions: Options = {
   },
   yAxis: {
     visible: true,
+    title: {
+      text: 'Progress issue count'
+    }
   },
 
   xAxis: {
     visible: true,
-
     categories: [],
+    title: {
+      text: 'Time'
+    }
   },
 
 

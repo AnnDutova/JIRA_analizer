@@ -11,15 +11,20 @@ export const taskPriorityChartOptions: Options = {
     text: 'Task priority',
   },
   yAxis: {
-    visible: false,
-    gridLineColor: '#fff',
+    visible: true,
+    title: {
+      text: 'Issue count'
+    }
   },
   legend: {
     enabled: false,
   },
   xAxis: {
     lineColor: '#fff',
-    categories: []
+    categories: [],
+    title: {
+      text: 'Priority'
+    }
   },
 
   plotOptions: {

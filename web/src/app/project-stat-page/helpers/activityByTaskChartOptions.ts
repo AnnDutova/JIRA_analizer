@@ -12,12 +12,17 @@ export const activityByTaskChartOptions: Options = {
   },
   yAxis: {
     visible: true,
+    title: {
+      text: 'Issue count'
+    }
   },
 
   xAxis: {
     visible: true,
-
     categories: [],
+    title: {
+      text: 'Date'
+    }
   },
 
   series: [],

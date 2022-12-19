@@ -12,12 +12,17 @@ export const resolveStateChartOptions: Options = {
   },
   yAxis: {
     visible: true,
+    title: {
+      text: 'Resolve issue count'
+    }
   },
 
   xAxis: {
     visible: true,
-
     categories: [],
+    title: {
+      text: 'Time'
+    }
   },
 
   series: [],

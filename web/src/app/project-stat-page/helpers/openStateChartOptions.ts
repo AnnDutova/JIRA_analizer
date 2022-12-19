@@ -12,12 +12,17 @@ export const openStateChartOptions: Options = {
   },
   yAxis: {
     visible: true,
+    title: {
+      text: 'Open issue count'
+    }
   },
 
   xAxis: {
     visible: true,
-
     categories: [],
+    title: {
+      text: 'Time'
+    }
   },
 
 

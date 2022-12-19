@@ -12,12 +12,17 @@ export const reopenStateChartOptions: Options = {
   },
   yAxis: {
     visible: true,
+    title: {
+      text: 'Reopen issue count'
+    }
   },
 
   xAxis: {
     visible: true,
-
     categories: [],
+    title: {
+      text: 'Time'
+    }
   },
 
   series: [],
