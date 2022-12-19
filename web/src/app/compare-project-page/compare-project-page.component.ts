@@ -176,19 +176,33 @@ export class CompareProjectPageComponent implements OnInit {
         activityByTaskChartOptions.xAxis["categories"] = info.data["categories"]["all"]
 
         for (let j = 0; j < this.projects.length; j++){
-          var countOpen = []
-          console.log(info.data)
-          for (let i = 0; i < info.data["categories"]["open"].length; i++){
-            // @ts-ignore
-            console.log(info.data["categories"]["open"][i])
-            console.log(info.data["open"][info.data["categories"]["open"][i]])
-            console.log(info.data["open"][info.data["categories"]["open"][i]][j])
-            countOpen.push(info.data["open"][info.data["categories"]["open"][i]][j])
+          var countOpen: any[] = []
+          for (let i = 0; i < info.data["categories"]["all"].length; i++) {
+            if (info.data["open"][info.data["categories"]["all"][i]] == undefined){
+              countOpen.push(0)
+            }
+            else{
+              countOpen.push(info.data["open"][info.data["categories"]["all"][i]][j])
+            }
           }
-          var countClose = []
-          for (let i = 0; i < info.data["categories"]["close"].length; i++){
-            // @ts-ignore
-            countClose.push(info.data["close"][info.data["categories"]["close"][i]][j])
+          var countClose: any[] = []
+          for (let i = 0; i < info.data["categories"]["all"].length; i++) {
+            if (info.data["close"][info.data["categories"]["all"][i]] == undefined){
+              countClose.push(0)
+            }
+            else{
+              countClose.push(info.data["close"][info.data["categories"]["all"][i]][j])
+            }
+          }
+          for (let i = 1; i < countOpen.length; i++) {
+            if (countOpen[i] == 0){
+              countOpen[i] = countOpen[i-1]
+            }
+          }
+          for (let i = 1; i < countClose.length; i++) {
+            if (countClose[i] == 0){
+              countClose[i] = countClose[i-1]
+            }
           }
           activityByTaskChartOptions.series?.push({ name: this.projects[j] + " open",
             type: "spline",

@@ -190,16 +190,33 @@ export class ProjectStatPageComponent implements OnInit {
         } else {
           // @ts-ignore
           activityByTaskChartOptions.xAxis["categories"] = info.data["categories"]["all"]
-          var countOpen = []
-          for (let i = 0; i < info.data["categories"]["open"].length; i++) {
-            // @ts-ignore
-            countOpen.push(info.data["open"][info.data["categories"]["open"][i]])
+          var countOpen: any[] = []
+          for (let i = 0; i < info.data["categories"]["all"].length; i++) {
+            if (info.data["open"][info.data["categories"]["all"][i]] == undefined){
+              if (i == 0){
+                countOpen.push(0)
+              }
+              else{
+                countOpen.push(countOpen[i-1])
+              }
+            }
+            else{
+              countOpen.push(info.data["open"][info.data["categories"]["all"][i]])
+            }
           }
-          console.log(countOpen)
-          var countClose = []
-          for (let i = 0; i < info.data["categories"]["close"].length; i++) {
-            // @ts-ignore
-            countClose.push(info.data["close"][info.data["categories"]["close"][i]])
+          var countClose: any[] = []
+          for (let i = 0; i < info.data["categories"]["all"].length; i++) {
+            if (info.data["close"][info.data["categories"]["all"][i]] == undefined){
+              if (i == 0){
+                countClose.push(0)
+              }
+              else{
+                countClose.push(countClose[i-1])
+              }
+            }
+            else{
+              countClose.push(info.data["close"][info.data["categories"]["all"][i]])
+            }
           }
           activityByTaskChartOptions.series?.push({
             name: this.projects[0] + " open",
