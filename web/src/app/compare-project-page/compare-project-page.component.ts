@@ -49,9 +49,11 @@ export class CompareProjectPageComponent implements OnInit {
     var colors = ["blue", "green", "red", "orange", "purple", "black"]
 
     var openTaskElem = document.getElementById('open-task') as HTMLElement;
+    var openTaskTitle = document.getElementById('open-task-title') as HTMLElement;
     this.dbProjectService.getComplitedGraph("1", this.projects).subscribe(info => {
       if (info.data["count"] == null) {
         openTaskElem.remove()
+        openTaskTitle.remove()
       }
       else{
         // @ts-ignore
@@ -76,10 +78,15 @@ export class CompareProjectPageComponent implements OnInit {
     var resolveStateElem = document.getElementById('resolve-state') as HTMLElement;
     var progressStateElem = document.getElementById('progress-state') as HTMLElement;
     var reopenStateElem = document.getElementById('reopen-state') as HTMLElement;
+    var openStateTitle = document.getElementById('open-state-title') as HTMLElement;
+    var resolveStateTitle = document.getElementById('resolve-state-title') as HTMLElement;
+    var progressStateTitle = document.getElementById('progress-state-title') as HTMLElement;
+    var reopenStateTitle = document.getElementById('reopen-state-title') as HTMLElement;
     this.dbProjectService.getComplitedGraph("2", this.projects).subscribe(info => {
       if (info.data["open"] == null) {
         //вывести, что в каком-то из проектов отсутствуют открытые задачи
         openStateElem.remove()
+        openStateTitle.remove()
       }
       else{
         // @ts-ignore
@@ -100,6 +107,7 @@ export class CompareProjectPageComponent implements OnInit {
       if (info.data["resolve"] == null) {
         //вывести, что в каком-то из проектов отсутствуют закрытые задачи
         resolveStateElem.remove()
+        resolveStateTitle.remove()
       }
       else{
         // @ts-ignore
@@ -123,6 +131,7 @@ export class CompareProjectPageComponent implements OnInit {
       if (info.data["progress"] == null) {
         //вывести, что в каком-то из проектов отсутствуют закрытые задачи
         progressStateElem.remove()
+        progressStateTitle.remove()
       }
       else{
         // @ts-ignore
@@ -145,6 +154,7 @@ export class CompareProjectPageComponent implements OnInit {
       if (info.data["reopen"] == null) {
         //вывести, что в каком-то из проектов отсутствуют открытые задачи
         reopenStateElem.remove()
+        reopenStateTitle.remove()
       }
       else{
         // @ts-ignore
@@ -167,9 +177,11 @@ export class CompareProjectPageComponent implements OnInit {
 
 
     var activityByTaskElem = document.getElementById('activity-by-task') as HTMLElement;
+    var activityByTaskTitle = document.getElementById('activity-by-task-title') as HTMLElement;
     this.dbProjectService.getComplitedGraph("3", this.projects).subscribe(info => {
       if (info.data["close"] == null) {
         activityByTaskElem.remove()
+        activityByTaskTitle.remove()
       }
       else{
         // @ts-ignore
@@ -218,9 +230,11 @@ export class CompareProjectPageComponent implements OnInit {
     })
 
     var complexityTaskElem = document.getElementById('complexity-task') as HTMLElement;
+    var complexityTaskTitle = document.getElementById('complexity-task-title') as HTMLElement;
     this.dbProjectService.getComplitedGraph("4", this.projects).subscribe(info => {
       if (info.data["categories"] == null) {
         complexityTaskElem.remove()
+        complexityTaskTitle.remove()
       }
       else{
         // @ts-ignore
@@ -241,9 +255,12 @@ export class CompareProjectPageComponent implements OnInit {
     })
 
     var taskPriorityElem = document.getElementById('task-priority') as HTMLElement;
+    var taskPriorityTitle = document.getElementById('task-priority-title') as HTMLElement;
     this.dbProjectService.getComplitedGraph("5", this.projects).subscribe(info => {
       if (info.data["categories"] == null) {
         taskPriorityElem.remove()
+        taskPriorityTitle.remove()
+        console.log("Here")
       }
       else{
         // @ts-ignore
@@ -264,9 +281,11 @@ export class CompareProjectPageComponent implements OnInit {
     })
 
     var closeTaskPriorityElem = document.getElementById('close-task-priority') as HTMLElement;
+    var closeTaskPriorityTitle = document.getElementById('close-task-priority-title') as HTMLElement;
     this.dbProjectService.getComplitedGraph("6", this.projects).subscribe(info => {
       if (info.data["categories"] == null) {
         closeTaskPriorityElem.remove()
+        closeTaskPriorityTitle.remove()
       }
       else{
         // @ts-ignore
