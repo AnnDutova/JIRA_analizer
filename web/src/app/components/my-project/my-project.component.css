@@ -57,7 +57,7 @@ th {
   margin: auto;
   border-collapse: collapse;
   border-spacing: 0;
-  background-color: rgba(236, 222, 177, 0.4);
+  background: #f3faf4;
   position: relative;
 }
 
@@ -91,17 +91,17 @@ button {
   text-transform: uppercase;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
-  background-color: #e5c04d;
+  background-color: #ADB7ED;
 }
 
 button:disabled {
   pointer-events: none;
-  background-color: #e5d3b1;
+  background-color: #9c9ca4;
 }
 
 .btn:active {
   transform: scale(0.98);
-  background-color: #e8ce86;
+  background-color: #ADB7ED;
 }
 
 .btn {
@@ -144,7 +144,7 @@ button:disabled {
   display: table;
   border-collapse: collapse;
   border-spacing: 0;
-  background-color: rgba(236, 222, 177, 0.4);
+  background-color: #f3faf4;
   position: relative;
 }
 
@@ -157,7 +157,3 @@ button:disabled {
   border-right: none;
 }
 
-.checkbox:active {
-  background-color: #e5c04d;
-  border-color: #D5B45B;
-}

@@ -11,15 +11,20 @@ export const closeTaskPriorityChartOptions: Options = {
     text: 'CLose task priority',
   },
   yAxis: {
-    visible: false,
-    gridLineColor: '#fff',
+    visible: true,
+    title: {
+      text: 'Close issue count'
+    }
   },
   legend: {
     enabled: false,
   },
   xAxis: {
     lineColor: '#fff',
-    categories: []
+    categories: [],
+    title: {
+      text: 'Priority'
+    }
   },
 
   plotOptions: {

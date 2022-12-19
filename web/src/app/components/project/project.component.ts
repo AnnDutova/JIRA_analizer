@@ -29,7 +29,7 @@ export class ProjectComponent implements OnInit {
           alert("Unable to connect to backend")
         }
         if (error.status == 400){
-          alert("Unable to connect to DB")
+          alert(error.message())
         }
       });
       } else {

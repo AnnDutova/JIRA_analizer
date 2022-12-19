@@ -6,10 +6,9 @@ button {
   height: 20px;
   line-height: 20px;
   padding: 0 2rem;
-  text-transform: uppercase;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
-  background-color: #e5c04d;
+  background: #a6deb0;
 }
 
 .header{
@@ -17,8 +16,8 @@ button {
 }
 
 .btn {
-  text-decoration: none;
-  color: #fff;
+  font-weight: bolder;
+  color: #000000;
   text-align: center;
   letter-spacing: .5px;
   -webkit-transition: .2s ease-out;

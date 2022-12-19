@@ -54,7 +54,7 @@ nav ul {
   color: #404040;
   padding: 15px 30px;
 }
-.topmenu_main li a:hover {color: #D5B45B;}
+.topmenu_main li a:hover {color: #fbfff8;}
 
 .submenu-link:after {
   content: '\f107';
@@ -97,5 +97,5 @@ nav ul {
   width: 100%;
   height: 50px;
   margin:auto;
-  background: rgba(202, 212, 165, 0.99);
+  background: #a6deb0;
 }

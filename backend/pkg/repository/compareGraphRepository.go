@@ -230,7 +230,7 @@ func (r *CompareGraphRepository) CheckExistenceOnTaskPriorityCountTableOpen(proj
 	var data []models.GraphOutput
 	var request []byte
 	err := r.db.Raw("Select data from \"taskPriorityCount\" "+
-		"left join project on projectId = project.id where project.title = ? and state = 'Open'", projectName).Row().Scan(&request)
+		"left join project on projectId = project.id where project.title = ? and state = 'All'", projectName).Row().Scan(&request)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

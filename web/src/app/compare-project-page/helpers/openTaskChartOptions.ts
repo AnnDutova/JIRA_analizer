@@ -11,15 +11,20 @@ export const openTaskChartOptions: Options = {
     text: 'Open task time statistic',
   },
   yAxis: {
-    visible: false,
-    gridLineColor: '#fff',
+    visible: true,
+    title: {
+      text: 'Open issue count'
+    }
   },
   legend: {
     enabled: false,
   },
   xAxis: {
     lineColor: '#fff',
-    categories: []
+    categories: [],
+    title: {
+      text: 'Time'
+    }
   },
 
   plotOptions: {

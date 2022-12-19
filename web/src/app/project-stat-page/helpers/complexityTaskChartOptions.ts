@@ -11,15 +11,20 @@ export const complexityTaskChartOptions: Options = {
     text: 'Complexity task',
   },
   yAxis: {
-    visible: false,
-    gridLineColor: '#fff',
+    visible: true,
+    title: {
+      text: 'Issue count'
+    }
   },
   legend: {
     enabled: false,
   },
   xAxis: {
     lineColor: '#fff',
-    categories: []
+    categories: [],
+    title: {
+      text: 'Log time'
+    }
   },
 
   plotOptions: {
